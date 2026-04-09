@@ -18,6 +18,11 @@ const ALLOWED_SNIPPETS = new Set([
   "list_tags",
   "list_tasks",
   "resolve_name",
+  "create_task",
+  "edit_task",
+  "complete_task",
+  "drop_task",
+  "delete_task",
 ]);
 
 const cache = new Map<string, string>();

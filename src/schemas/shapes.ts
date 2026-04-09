@@ -33,6 +33,34 @@ export const TaskDetail = z.object({
   containerId: IdSchema.nullable(),
   containerType: z.enum(["project", "inbox", "task"]).nullable(),
   tagIds: z.array(IdSchema),
+  parentTaskId: IdSchema.nullable(),
+});
+
+export const CreateTaskInput = z
+  .object({
+    name: z.string().min(1),
+    note: z.string().optional(),
+    flagged: z.boolean().optional(),
+    deferDate: z.string().datetime().optional(),
+    dueDate: z.string().datetime().optional(),
+    estimatedMinutes: z.number().int().positive().optional(),
+    projectId: IdSchema.optional(),
+    parentTaskId: IdSchema.optional(),
+    tagIds: z.array(IdSchema).optional(),
+  })
+  .refine((d) => !(d.projectId && d.parentTaskId), {
+    message: "Provide projectId or parentTaskId, not both",
+  });
+
+export const EditTaskInput = z.object({
+  id: IdSchema,
+  name: z.string().min(1).optional(),
+  note: z.string().optional(),
+  flagged: z.boolean().optional(),
+  deferDate: z.string().datetime().nullable().optional(),
+  dueDate: z.string().datetime().nullable().optional(),
+  estimatedMinutes: z.number().int().positive().nullable().optional(),
+  tagIds: z.array(IdSchema).optional(),
 });
 
 // ─── Project ─────────────────────────────────────────────────────────────────

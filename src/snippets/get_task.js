@@ -8,10 +8,7 @@
 (() => {
   const args = __ARGS__;
 
-  function NotFoundError(msg) {
-    this.name = "NotFoundError";
-    this.message = msg;
-  }
+  function NotFoundError(msg) { var e = new Error(msg); e.name = "NotFoundError"; return e; }
 
   function isoOrNull(d) {
     return d ? d.toISOString() : null;
@@ -63,6 +60,7 @@
     containerId: ci.containerId,
     containerType: ci.containerType,
     tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
+    parentTaskId: task.parentTask ? task.parentTask.id.primaryKey : null,
   };
 
   return JSON.stringify({ ok: true, data: detail });

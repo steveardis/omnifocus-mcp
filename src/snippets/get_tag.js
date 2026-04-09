@@ -8,10 +8,7 @@
 (() => {
   const args = __ARGS__;
 
-  function NotFoundError(msg) {
-    this.name = "NotFoundError";
-    this.message = msg;
-  }
+  function NotFoundError(msg) { var e = new Error(msg); e.name = "NotFoundError"; return e; }
 
   function buildPath(tag) {
     const parts = [];

@@ -11,6 +11,8 @@ export {
 export {
   TaskSummary,
   TaskDetail,
+  CreateTaskInput,
+  EditTaskInput,
   ProjectSummary,
   ProjectDetail,
   FolderSummary,

@@ -101,6 +101,109 @@ export async function cleanupTestFolder(folderId: string): Promise<void> {
 }
 
 /**
+ * Creates a project inside a fixture folder. Returns the project's id.primaryKey.
+ * Uses inline JXA so it does not depend on the create_project snippet.
+ */
+export async function createTestProject(
+  folderId: string,
+  name: string
+): Promise<string> {
+  const { spawnSync } = await import("child_process");
+  const snippet = `(() => {
+    var folder = flattenedFolders.find(function(f){ return f.id.primaryKey === ${JSON.stringify(folderId)}; });
+    if (!folder) throw new Error("Fixture folder not found: " + ${JSON.stringify(folderId)});
+    var proj = new Project(${JSON.stringify(name)}, folder);
+    return JSON.stringify({ok:true,data:{id:proj.id.primaryKey}});
+  })()`;
+  const script = `
+    (function() {
+      var app = Application('OmniFocus');
+      app.includeStandardAdditions = true;
+      try {
+        var r = app.evaluateJavascript(${JSON.stringify(snippet)});
+        $.NSFileHandle.fileHandleWithStandardOutput.writeData($.NSString.alloc.initWithString(r+'\\n').dataUsingEncoding($.NSUTF8StringEncoding));
+      } catch(e) {
+        $.NSFileHandle.fileHandleWithStandardOutput.writeData($.NSString.alloc.initWithString(JSON.stringify({ok:false,error:{name:e.name||'Error',message:e.message||String(e)}})+'\\n').dataUsingEncoding($.NSUTF8StringEncoding));
+      }
+    })();
+  `;
+  const result = spawnSync("osascript", ["-l", "JavaScript"], {
+    input: script,
+    encoding: "utf-8",
+    timeout: 15_000,
+  });
+  const line = (result.stdout || "").split("\n").find((l) => l.trim().startsWith("{"));
+  if (!line) throw new Error(`createTestProject: no JSON in output: ${result.stdout}`);
+  const parsed = JSON.parse(line) as { ok: boolean; data?: { id: string }; error?: { message: string } };
+  if (!parsed.ok || !parsed.data) throw new Error(`createTestProject failed: ${parsed.error?.message}`);
+  return parsed.data.id;
+}
+
+/**
+ * Creates a top-level tag. Returns the tag's id.primaryKey.
+ * Uses inline JXA so it does not depend on the create_tag snippet.
+ */
+export async function createTestTag(name: string): Promise<string> {
+  const { spawnSync } = await import("child_process");
+  const snippet = `(() => {
+    var tag = new Tag(${JSON.stringify(name)});
+    return JSON.stringify({ok:true,data:{id:tag.id.primaryKey}});
+  })()`;
+  const script = `
+    (function() {
+      var app = Application('OmniFocus');
+      app.includeStandardAdditions = true;
+      try {
+        var r = app.evaluateJavascript(${JSON.stringify(snippet)});
+        $.NSFileHandle.fileHandleWithStandardOutput.writeData($.NSString.alloc.initWithString(r+'\\n').dataUsingEncoding($.NSUTF8StringEncoding));
+      } catch(e) {
+        $.NSFileHandle.fileHandleWithStandardOutput.writeData($.NSString.alloc.initWithString(JSON.stringify({ok:false,error:{name:e.name||'Error',message:e.message||String(e)}})+'\\n').dataUsingEncoding($.NSUTF8StringEncoding));
+      }
+    })();
+  `;
+  const result = spawnSync("osascript", ["-l", "JavaScript"], {
+    input: script,
+    encoding: "utf-8",
+    timeout: 15_000,
+  });
+  const line = (result.stdout || "").split("\n").find((l) => l.trim().startsWith("{"));
+  if (!line) throw new Error(`createTestTag: no JSON in output: ${result.stdout}`);
+  const parsed = JSON.parse(line) as { ok: boolean; data?: { id: string }; error?: { message: string } };
+  if (!parsed.ok || !parsed.data) throw new Error(`createTestTag failed: ${parsed.error?.message}`);
+  return parsed.data.id;
+}
+
+/**
+ * Deletes a tag by id.primaryKey. Silent if not found.
+ * Uses inline JXA so it does not depend on the delete_tag snippet.
+ */
+export async function deleteTestTag(tagId: string): Promise<void> {
+  const { spawnSync } = await import("child_process");
+  const snippet = `(() => {
+    var tag = flattenedTags.find(function(t){ return t.id.primaryKey === ${JSON.stringify(tagId)}; });
+    if (tag) deleteObject(tag);
+    return JSON.stringify({ok:true,data:null});
+  })()`;
+  const script = `
+    (function() {
+      var app = Application('OmniFocus');
+      app.includeStandardAdditions = true;
+      try {
+        var r = app.evaluateJavascript(${JSON.stringify(snippet)});
+        $.NSFileHandle.fileHandleWithStandardOutput.writeData($.NSString.alloc.initWithString(r+'\\n').dataUsingEncoding($.NSUTF8StringEncoding));
+      } catch(e) {
+        $.NSFileHandle.fileHandleWithStandardOutput.writeData($.NSString.alloc.initWithString(JSON.stringify({ok:true,data:null})+'\\n').dataUsingEncoding($.NSUTF8StringEncoding));
+      }
+    })();
+  `;
+  spawnSync("osascript", ["-l", "JavaScript"], {
+    input: script,
+    encoding: "utf-8",
+    timeout: 15_000,
+  });
+}
+
+/**
  * Helper: creates a fixture folder, runs fn, cleans up in afterAll.
  * Usage: const fixture = await withTestFolder(async (f) => { ... });
  */

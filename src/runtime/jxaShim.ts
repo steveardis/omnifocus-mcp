@@ -24,11 +24,17 @@ export const JXA_SHIM_TEMPLATE = `
         .dataUsingEncoding($.NSUTF8StringEncoding)
     );
   } catch(e) {
+    var errName = e.name || 'Error';
+    var errMsg = e.message || String(e);
+    // OmniJS wraps thrown errors; the original name is embedded in the message
+    // as "SomeName: original message". Recover it when the name is generic.
+    var nameMatch = errMsg.match(/^([A-Z]\\w*Error): ([\\s\\S]*)$/);
+    if (nameMatch) { errName = nameMatch[1]; errMsg = nameMatch[2]; }
     var err = JSON.stringify({
       ok: false,
       error: {
-        name: e.name || 'Error',
-        message: e.message || String(e)
+        name: errName,
+        message: errMsg
       }
     });
     $.NSFileHandle.fileHandleWithStandardOutput.writeData(
