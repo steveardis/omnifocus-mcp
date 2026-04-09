@@ -22,6 +22,8 @@ export {
   EditFolderInput,
   FolderSummary,
   FolderDetail,
+  CreateTagInput,
+  EditTagInput,
   TagSummary,
   TagDetail,
   ResolveCandidate,

@@ -20,6 +20,9 @@ export { deleteProjectTool } from "./deleteProject.js";
 export { createFolderTool } from "./createFolder.js";
 export { editFolderTool } from "./editFolder.js";
 export { deleteFolderTool } from "./deleteFolder.js";
+export { createTagTool } from "./createTag.js";
+export { editTagTool } from "./editTag.js";
+export { deleteTagTool } from "./deleteTag.js";
 
 import { listProjectsTool } from "./listProjects.js";
 import { getProjectTool } from "./getProject.js";
@@ -43,6 +46,9 @@ import { deleteProjectTool } from "./deleteProject.js";
 import { createFolderTool } from "./createFolder.js";
 import { editFolderTool } from "./editFolder.js";
 import { deleteFolderTool } from "./deleteFolder.js";
+import { createTagTool } from "./createTag.js";
+import { editTagTool } from "./editTag.js";
+import { deleteTagTool } from "./deleteTag.js";
 
 export const allTools = [
   listProjectsTool,
@@ -67,4 +73,7 @@ export const allTools = [
   createFolderTool,
   editFolderTool,
   deleteFolderTool,
+  createTagTool,
+  editTagTool,
+  deleteTagTool,
 ] as const;

@@ -31,6 +31,9 @@ const ALLOWED_SNIPPETS = new Set([
   "create_folder",
   "edit_folder",
   "delete_folder",
+  "create_tag",
+  "edit_tag",
+  "delete_tag",
 ]);
 
 const cache = new Map<string, string>();

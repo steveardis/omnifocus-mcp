@@ -151,6 +151,21 @@ export const FolderDetail = z.object({
   projectIds: z.array(IdSchema),
 });
 
+export const CreateTagInput = z.object({
+  name: z.string().min(1),
+  parentTagId: IdSchema.optional(),
+});
+
+export const EditTagInput = z
+  .object({
+    id: IdSchema,
+    name: z.string().min(1).optional(),
+    status: TagStatus.optional(),
+  })
+  .refine((d) => d.name !== undefined || d.status !== undefined, {
+    message: "Provide at least one of name or status",
+  });
+
 // ─── Tag ─────────────────────────────────────────────────────────────────────
 
 export const TagSummary = z.object({
