@@ -71,6 +71,22 @@ If you have a name but not an ID, use `resolve_name`. It returns a list — if m
 
 Full CRUD on tasks, projects, folders, and tags; recurrence rules; perspectives and window state; forecast; batch operations; attachments; URL automation; settings.
 
+## Comparison with other OmniFocus MCP servers
+
+Two notable alternatives exist:
+[themotionmachine/OmniFocus-MCP](https://github.com/themotionmachine/OmniFocus-MCP) and
+[jqlts1/omnifocus-mcp-enhanced](https://github.com/jqlts1/omnifocus-mcp-enhanced) (a fork of the above with additional tools).
+
+**Scripting API.** The alternatives use the JXA scripting dictionary or AppleScript to drive OmniFocus. This server makes a single JXA call — `Application('OmniFocus').evaluateJavascript()` — and runs all logic as OmniJS (Omni Automation) inside OmniFocus. This gives access to the full Omni Automation API surface (recurrence rules, review intervals, perspectives, forecast, attachments, URL automation, etc.) rather than the more limited scripting dictionary.
+
+**Argument injection.** The alternatives construct osascript commands via string interpolation, which can break on apostrophes, quotes, backslashes, and unicode in names. This server serializes all arguments with `JSON.stringify` into a JS literal.
+
+**Entity addressing.** The alternatives address entities primarily by name. This server returns a stable `id` (`id.primaryKey`) for every entity and provides `resolve_name` to map a name to ID candidates — returning all matches with full paths rather than silently picking one when names are ambiguous.
+
+**Read-only (current release).** The alternatives support creating, editing, and deleting tasks and projects today. This server is read-only in this release; full CRUD is planned for the next release.
+
+**Fewer tools (current release).** The enhanced fork has 18 tools including forecast, flagged tasks, task move, attachment reading, and custom perspectives. This server currently has 9.
+
 ## Development
 
 ```bash
