@@ -12,6 +12,11 @@ export { editTaskTool } from "./editTask.js";
 export { completeTaskTool } from "./completeTask.js";
 export { dropTaskTool } from "./dropTask.js";
 export { deleteTaskTool } from "./deleteTask.js";
+export { createProjectTool } from "./createProject.js";
+export { editProjectTool } from "./editProject.js";
+export { completeProjectTool } from "./completeProject.js";
+export { dropProjectTool } from "./dropProject.js";
+export { deleteProjectTool } from "./deleteProject.js";
 
 import { listProjectsTool } from "./listProjects.js";
 import { getProjectTool } from "./getProject.js";
@@ -27,6 +32,11 @@ import { editTaskTool } from "./editTask.js";
 import { completeTaskTool } from "./completeTask.js";
 import { dropTaskTool } from "./dropTask.js";
 import { deleteTaskTool } from "./deleteTask.js";
+import { createProjectTool } from "./createProject.js";
+import { editProjectTool } from "./editProject.js";
+import { completeProjectTool } from "./completeProject.js";
+import { dropProjectTool } from "./dropProject.js";
+import { deleteProjectTool } from "./deleteProject.js";
 
 export const allTools = [
   listProjectsTool,
@@ -43,4 +53,9 @@ export const allTools = [
   completeTaskTool,
   dropTaskTool,
   deleteTaskTool,
+  createProjectTool,
+  editProjectTool,
+  completeProjectTool,
+  dropProjectTool,
+  deleteProjectTool,
 ] as const;

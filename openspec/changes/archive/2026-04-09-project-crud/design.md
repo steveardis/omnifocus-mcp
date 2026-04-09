@@ -7,8 +7,8 @@ OmniJS project write operations:
 - Property assignment for scalars: `name`, `note`, `flagged`, `deferDate`, `dueDate`, `sequential`, `containsSingletonActions`
 - `project.status = Project.Status.Active / OnHold` — for hold/active transitions
 - `project.markComplete()` — dedicated method for done
-- `project.drop()` — dedicated method for dropped
-- `project.reviewInterval = new Project.ReviewInterval(steps, unit)` — structured assignment
+- `project.status = Project.Status.Dropped` — drops the project (`project.drop()` is not available via `evaluateJavascript`)
+- `project.reviewInterval.steps = n` — only `steps` can be mutated in-place; `Project.ReviewInterval` is a CallbackObject in the `evaluateJavascript` context and cannot be constructed with `new`, so the unit cannot be changed and the interval cannot be cleared (OmniJS rejects `null`)
 - Tags: `project.addTag(tag)` / `project.removeTag(tag)` — same pattern as tasks
 - `deleteObject(project)` — permanent deletion including all tasks
 
@@ -36,15 +36,17 @@ Project type is not a single OmniJS property — it is encoded across two boolea
 
 `create_project` and `edit_project` accept the enum string `"parallel" | "sequential" | "singleActions"` and the snippet maps it to the correct property assignments.
 
-### Decision 2: `reviewInterval` as structured input
+### Decision 2: `reviewInterval` — steps only, in-place mutation
 
-`edit_project` accepts `reviewInterval` as `{steps: number, unit: "days" | "weeks" | "months" | "years"} | null`. The snippet constructs `new Project.ReviewInterval(steps, unit)` and assigns it. Passing `null` clears the review interval. This avoids the ambiguous `"1 weeks"` string format used in read output (which was a workaround for `String(ri)` returning `[object Project.ReviewInterval]`).
+`edit_project` and `create_project` accept `reviewInterval` as `{steps: number, unit: "days" | "weeks" | "months" | "years"}`. Only the `steps` field can actually be applied: `project.reviewInterval.steps = n` mutates the existing interval in place.
 
-**Note:** Read output (`get_project`) still returns the string form `"1 weeks"` — that is a read-side concern. The write side takes a structured object.
+**Limitations discovered during implementation:** `Project.ReviewInterval` is a CallbackObject in the `evaluateJavascript` context — `new Project.ReviewInterval(steps, unit)` throws. `Project.ReviewInterval.Unit` is also undefined in this context, so the unit cannot be changed. Setting `project.reviewInterval = null` is rejected by OmniJS ("must be set to a non-null value"). As a result, the `unit` field in `reviewInterval` input is accepted by the schema but silently ignored at runtime.
 
-### Decision 3: Status transitions via dedicated tools
+**Note:** Read output (`get_project`) returns the string form `"1 weeks"` — that is a read-side concern unchanged by this limitation.
 
-`complete_project` calls `markComplete()`, `drop_project` calls `drop()`. Active/on-hold are set via `project.status = Project.Status.Active / OnHold` inside `edit_project` (these are property assignments, not method calls). This keeps the common "put on hold" operation accessible through `edit_project` without requiring a dedicated tool.
+### Decision 3: Status transitions via dedicated tools and property assignment
+
+`complete_project` calls `markComplete()`. `drop_project` sets `project.status = Project.Status.Dropped` — `project.drop()` does not exist in the `evaluateJavascript` context. Active/on-hold are set via `project.status = Project.Status.Active / OnHold` inside `edit_project` (these are property assignments, not method calls). This keeps the common "put on hold" operation accessible through `edit_project` without requiring a dedicated tool.
 
 ### Decision 4: `delete_project` description warns about task cascade
 

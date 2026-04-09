@@ -22,7 +22,7 @@ The system SHALL provide a `create_project` tool that creates a new OmniFocus pr
 
 ### Requirement: Edit project
 
-The system SHALL provide an `edit_project` tool that modifies an existing project and returns its updated full detail record. The tool SHALL accept `{id: string}` plus any subset of `{name?: string, note?: string, type?: "parallel" | "sequential" | "singleActions", status?: "active" | "onHold", flagged?: boolean, deferDate?: string | null, dueDate?: string | null, reviewInterval?: {steps: number, unit: "days" | "weeks" | "months" | "years"} | null, tagIds?: string[]}`. Fields omitted from the call SHALL be left unchanged. When `tagIds` is provided it SHALL replace the project's entire tag set. Passing `null` for a date or `reviewInterval` SHALL clear the field.
+The system SHALL provide an `edit_project` tool that modifies an existing project and returns its updated full detail record. The tool SHALL accept `{id: string}` plus any subset of `{name?: string, note?: string, type?: "parallel" | "sequential" | "singleActions", status?: "active" | "onHold", flagged?: boolean, deferDate?: string | null, dueDate?: string | null, reviewInterval?: {steps: number, unit: "days" | "weeks" | "months" | "years"}, tagIds?: string[]}`. Fields omitted from the call SHALL be left unchanged. When `tagIds` is provided it SHALL replace the project's entire tag set. Passing `null` for a date SHALL clear the field. When `reviewInterval` is provided, only the `steps` value is updated; the `unit` field is accepted by the schema but cannot be changed at runtime due to OmniJS API constraints in the `evaluateJavascript` context.
 
 #### Scenario: Put project on hold
 - **WHEN** `edit_project` is called with `{id: "abc123", status: "onHold"}`
@@ -32,9 +32,6 @@ The system SHALL provide an `edit_project` tool that modifies an existing projec
 - **WHEN** `edit_project` is called with `{id: "abc123", reviewInterval: {steps: 2, unit: "weeks"}}`
 - **THEN** the project's review interval is updated and the returned detail reflects the change
 
-#### Scenario: Clear review interval
-- **WHEN** `edit_project` is called with `{id: "abc123", reviewInterval: null}`
-- **THEN** the project's review interval is cleared
 
 #### Scenario: Non-existent project returns not-found error
 - **WHEN** `edit_project` is called with an ID that does not correspond to any project

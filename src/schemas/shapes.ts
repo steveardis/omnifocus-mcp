@@ -65,6 +65,37 @@ export const EditTaskInput = z.object({
 
 // ─── Project ─────────────────────────────────────────────────────────────────
 
+export const ReviewIntervalInput = z.object({
+  steps: z.number().int().positive(),
+  unit: z.enum(["days", "weeks", "months", "years"]),
+});
+
+export const CreateProjectInput = z.object({
+  name: z.string().min(1),
+  folderId: IdSchema.optional(),
+  note: z.string().optional(),
+  type: ProjectType.optional(),
+  status: z.enum(["active", "onHold"]).optional(),
+  flagged: z.boolean().optional(),
+  deferDate: z.string().datetime().optional(),
+  dueDate: z.string().datetime().optional(),
+  reviewInterval: ReviewIntervalInput.optional(),
+  tagIds: z.array(IdSchema).optional(),
+});
+
+export const EditProjectInput = z.object({
+  id: IdSchema,
+  name: z.string().min(1).optional(),
+  note: z.string().optional(),
+  type: ProjectType.optional(),
+  status: z.enum(["active", "onHold"]).optional(),
+  flagged: z.boolean().optional(),
+  deferDate: z.string().datetime().nullable().optional(),
+  dueDate: z.string().datetime().nullable().optional(),
+  reviewInterval: ReviewIntervalInput.optional(),
+  tagIds: z.array(IdSchema).optional(),
+});
+
 export const ProjectSummary = z.object({
   id: IdSchema,
   name: z.string(),
