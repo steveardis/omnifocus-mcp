@@ -28,6 +28,9 @@ const ALLOWED_SNIPPETS = new Set([
   "complete_project",
   "drop_project",
   "delete_project",
+  "create_folder",
+  "edit_folder",
+  "delete_folder",
 ]);
 
 const cache = new Map<string, string>();

@@ -18,6 +18,8 @@ export {
   EditProjectInput,
   ProjectSummary,
   ProjectDetail,
+  CreateFolderInput,
+  EditFolderInput,
   FolderSummary,
   FolderDetail,
   TagSummary,

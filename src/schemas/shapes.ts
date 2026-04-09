@@ -121,6 +121,16 @@ export const ProjectDetail = z.object({
   tagIds: z.array(IdSchema),
 });
 
+export const CreateFolderInput = z.object({
+  name: z.string().min(1),
+  parentFolderId: IdSchema.optional(),
+});
+
+export const EditFolderInput = z.object({
+  id: IdSchema,
+  name: z.string().min(1),
+});
+
 // ─── Folder ──────────────────────────────────────────────────────────────────
 
 export const FolderSummary = z.object({
