@@ -35,9 +35,12 @@ export async function runSnippet(
   const jxaScript = buildJxaScript(snippet);
 
   return new Promise((resolve, reject) => {
+    const MAX_OUTPUT_BYTES = 10 * 1024 * 1024; // 10 MB
+
     const ac = new AbortController();
     const timer = setTimeout(() => {
       ac.abort();
+      child.kill("SIGKILL");
       reject(new Error(`Snippet "${name}" timed out after ${timeoutMs}ms`));
     }, timeoutMs);
 
@@ -50,6 +53,11 @@ export async function runSnippet(
 
     child.stdout.on("data", (chunk: Buffer) => {
       stdout += chunk.toString();
+      if (stdout.length > MAX_OUTPUT_BYTES) {
+        child.kill("SIGKILL");
+        clearTimeout(timer);
+        reject(new Error(`Snippet "${name}" exceeded maximum output size`));
+      }
     });
 
     child.stderr.on("data", (chunk: Buffer) => {
@@ -72,10 +80,11 @@ export async function runSnippet(
           reject(new ExecutionError(envelope.error));
         }
       } catch (parseErr) {
+        const hint = stdout.slice(0, 200) || stderr.slice(0, 200);
         reject(
           new Error(
-            `Failed to parse bridge output for snippet "${name}" (exit ${code}).\n` +
-              `stdout: ${stdout}\nstderr: ${stderr}\n${parseErr}`
+            `Failed to parse bridge output for snippet "${name}" (exit ${code})` +
+              (hint ? `: ${hint}` : "")
           )
         );
       }

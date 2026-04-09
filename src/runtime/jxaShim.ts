@@ -28,8 +28,7 @@ export const JXA_SHIM_TEMPLATE = `
       ok: false,
       error: {
         name: e.name || 'Error',
-        message: e.message || String(e),
-        stack: e.stack
+        message: e.message || String(e)
       }
     });
     $.NSFileHandle.fileHandleWithStandardOutput.writeData(

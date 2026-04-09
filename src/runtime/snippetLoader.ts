@@ -5,9 +5,28 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SNIPPETS_DIR = join(__dirname, "..", "snippets");
 
+// Allowlist of valid snippet names. Adding a new snippet requires an explicit
+// entry here, which prevents path-traversal attacks if a snippet name ever
+// reaches this loader from a dynamic source.
+const ALLOWED_SNIPPETS = new Set([
+  "get_folder",
+  "get_project",
+  "get_tag",
+  "get_task",
+  "list_folders",
+  "list_projects",
+  "list_tags",
+  "list_tasks",
+  "resolve_name",
+]);
+
 const cache = new Map<string, string>();
 
 export function loadSnippet(name: string): string {
+  if (!ALLOWED_SNIPPETS.has(name)) {
+    throw new Error(`Unknown snippet: "${name}"`);
+  }
+
   if (cache.has(name)) {
     return cache.get(name)!;
   }
@@ -16,10 +35,8 @@ export function loadSnippet(name: string): string {
   let content: string;
   try {
     content = readFileSync(filePath, "utf-8");
-  } catch (err) {
-    throw new Error(
-      `Snippet not found: "${name}" (looked in ${filePath})`
-    );
+  } catch {
+    throw new Error(`Snippet "${name}" could not be loaded`);
   }
 
   const matches = content.split("__ARGS__").length - 1;
