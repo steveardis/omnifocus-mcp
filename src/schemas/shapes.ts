@@ -95,7 +95,8 @@ export const EditTaskInput = z.object({
   dueDate: z.string().datetime().nullable().optional(),
   estimatedMinutes: z.number().int().positive().nullable().optional(),
   tagIds: z.array(IdSchema).optional(),
-  repetitionRule: RepetitionRuleInput.nullable().optional(),
+  repetitionRule: RepetitionRuleInput.optional(),
+  clearRepetitionRule: z.literal(true).optional().describe("Set to true to clear the task's repetition rule"),
 });
 
 // ─── Project ─────────────────────────────────────────────────────────────────

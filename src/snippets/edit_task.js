@@ -134,12 +134,10 @@
     });
   }
 
-  if ("repetitionRule" in args) {
-    if (args.repetitionRule === null) {
-      task.repetitionRule = null;
-    } else if (args.repetitionRule) {
-      task.repetitionRule = new Task.RepetitionRule(buildRrule(args.repetitionRule), buildMethod(args.repetitionRule.method));
-    }
+  if (args.clearRepetitionRule === true) {
+    task.repetitionRule = null;
+  } else if (args.repetitionRule) {
+    task.repetitionRule = new Task.RepetitionRule(buildRrule(args.repetitionRule), buildMethod(args.repetitionRule.method));
   }
 
   return JSON.stringify({ ok: true, data: taskDetail(task) });

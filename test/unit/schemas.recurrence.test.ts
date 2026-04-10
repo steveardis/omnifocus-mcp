@@ -90,9 +90,9 @@ describe("EditTaskInput with repetitionRule", () => {
     ).not.toThrow();
   });
 
-  it("accepts edit with repetitionRule null (clear rule)", () => {
+  it("accepts edit with clearRepetitionRule true (clear rule)", () => {
     expect(() =>
-      EditTaskInput.parse({ id: "abc", repetitionRule: null })
+      EditTaskInput.parse({ id: "abc", clearRepetitionRule: true })
     ).not.toThrow();
   });
 });

@@ -83,7 +83,7 @@ describe("task recurrence (integration)", () => {
 
     const cleared = await runSnippet("edit_task", {
       id: task.id,
-      repetitionRule: null,
+      clearRepetitionRule: true,
     });
     const updated = TaskDetail.parse(cleared);
     expect(updated.repetitionRule).toBeNull();
