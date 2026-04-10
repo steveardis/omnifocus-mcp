@@ -9,6 +9,8 @@ export {
 } from "./enums.js";
 
 export {
+  RepetitionRuleInput,
+  RepetitionRuleDetail,
   TaskSummary,
   ListTasksFilter,
   TaskDetail,

@@ -9,6 +9,31 @@ import {
   EntityType,
 } from "./enums.js";
 
+// ─── Recurrence ──────────────────────────────────────────────────────────────
+
+const RepetitionFrequency = z.enum(["daily", "weekly", "monthly", "yearly"]);
+const RepetitionMethod = z.enum(["fixed", "dueDate", "start"]);
+const DayOfWeek = z.enum(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]);
+
+export const RepetitionRuleInput = z
+  .object({
+    frequency: RepetitionFrequency,
+    interval: z.number().int().positive().default(1),
+    daysOfWeek: z.array(DayOfWeek).optional(),
+    method: RepetitionMethod,
+  })
+  .refine(
+    (d) => d.daysOfWeek === undefined || d.frequency === "weekly",
+    { message: "daysOfWeek is only valid when frequency is 'weekly'" }
+  );
+
+export const RepetitionRuleDetail = z.object({
+  frequency: RepetitionFrequency,
+  interval: z.number(),
+  daysOfWeek: z.array(DayOfWeek).optional(),
+  method: RepetitionMethod,
+});
+
 // ─── Task ────────────────────────────────────────────────────────────────────
 
 export const TaskSummary = z.object({
@@ -43,6 +68,7 @@ export const TaskDetail = z.object({
   containerType: z.enum(["project", "inbox", "task"]).nullable(),
   tagIds: z.array(IdSchema),
   parentTaskId: IdSchema.nullable(),
+  repetitionRule: RepetitionRuleDetail.nullable(),
 });
 
 export const CreateTaskInput = z
@@ -56,6 +82,7 @@ export const CreateTaskInput = z
     projectId: IdSchema.optional(),
     parentTaskId: IdSchema.optional(),
     tagIds: z.array(IdSchema).optional(),
+    repetitionRule: RepetitionRuleInput.optional(),
   })
   .refine((d) => !(d.projectId && d.parentTaskId), {
     message: "Provide projectId or parentTaskId, not both",
@@ -70,6 +97,7 @@ export const EditTaskInput = z.object({
   dueDate: z.string().datetime().nullable().optional(),
   estimatedMinutes: z.number().int().positive().nullable().optional(),
   tagIds: z.array(IdSchema).optional(),
+  repetitionRule: RepetitionRuleInput.nullable().optional(),
 });
 
 // ─── Project ─────────────────────────────────────────────────────────────────

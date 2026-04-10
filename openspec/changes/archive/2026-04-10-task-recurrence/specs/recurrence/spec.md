@@ -1,10 +1,4 @@
-# recurrence
-
-## Purpose
-
-Covers the construction, assignment, reading, and clearing of `Task.RepetitionRule` values on OmniFocus tasks.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Capability declared
 
@@ -14,9 +8,11 @@ The `recurrence` capability covers the construction, assignment, reading, and cl
 - **WHEN** a change proposes adding or modifying recurrence-related behavior
 - **THEN** it lands requirements under this capability
 
+## ADDED Requirements
+
 ### Requirement: Set repetition rule on task
 
-The system SHALL accept a `repetitionRule` field in `create_task` and `edit_task`. When provided, the snippet SHALL construct an ICS RRULE string from the structured fields and assign it via `new Task.RepetitionRule(rrule, method)`. The `daysOfWeek` field SHALL only be valid when `frequency` is `"weekly"`; providing it for any other frequency SHALL be a validation error. When `edit_task` receives `repetitionRule: null`, the snippet SHALL assign `task.repetitionRule = null` to clear the rule. When `edit_task` omits `repetitionRule` entirely, the existing rule SHALL be left unchanged.
+The system SHALL accept a `repetitionRule` field in `create_task` and `edit_task`. When provided, the snippet SHALL construct an ICS RRULE string from the structured fields and assign it via `Task.RepetitionRule.make(rrule, method)`. The `daysOfWeek` field SHALL only be valid when `frequency` is `"weekly"`; providing it for any other frequency SHALL be a validation error. When `edit_task` receives `repetitionRule: null`, the snippet SHALL assign `task.repetitionRule = null` to clear the rule. When `edit_task` omits `repetitionRule` entirely, the existing rule SHALL be left unchanged.
 
 #### Scenario: Set daily repetition at creation
 - **WHEN** `create_task` is called with `{ name: "Stand-up", repetitionRule: { frequency: "daily", interval: 1, method: "fixed" } }`

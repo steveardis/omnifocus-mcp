@@ -37,6 +37,33 @@
     return { containerId: c.id.primaryKey, containerType: "task" };
   }
 
+  function parseMethod(method) {
+    var s = String(method);
+    if (s.indexOf("DueDate") >= 0) return "dueDate";
+    if (s.indexOf("DeferUntilDate") >= 0) return "start";
+    return "fixed";
+  }
+
+  function parseRepetitionRule(rule) {
+    if (!rule) return null;
+    try {
+      var ruleStr = rule.ruleString || "";
+      var parts = {};
+      ruleStr.split(";").forEach(function(part) {
+        var kv = part.split("=");
+        if (kv.length === 2) parts[kv[0]] = kv[1];
+      });
+      var freqMap = { DAILY: "daily", WEEKLY: "weekly", MONTHLY: "monthly", YEARLY: "yearly" };
+      var frequency = freqMap[parts["FREQ"]] || "daily";
+      var interval = parts["INTERVAL"] ? parseInt(parts["INTERVAL"], 10) : 1;
+      var ABBR_DAY = { SU: "sunday", MO: "monday", TU: "tuesday", WE: "wednesday", TH: "thursday", FR: "friday", SA: "saturday" };
+      var daysOfWeek = parts["BYDAY"] ? parts["BYDAY"].split(",").map(function(a) { return ABBR_DAY[a]; }).filter(Boolean) : undefined;
+      var result = { frequency: frequency, interval: interval, method: parseMethod(rule.method) };
+      if (daysOfWeek && daysOfWeek.length > 0) result.daysOfWeek = daysOfWeek;
+      return result;
+    } catch(_) { return null; }
+  }
+
   const task = flattenedTasks.find(function(t) {
     return t.id.primaryKey === args.id;
   });
@@ -61,6 +88,7 @@
     containerType: ci.containerType,
     tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
     parentTaskId: task.parentTask ? task.parentTask.id.primaryKey : null,
+    repetitionRule: parseRepetitionRule(task.repetitionRule),
   };
 
   return JSON.stringify({ ok: true, data: detail });

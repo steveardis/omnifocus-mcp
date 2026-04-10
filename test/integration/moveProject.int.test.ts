@@ -15,6 +15,10 @@ describe("move_project (integration)", () => {
   });
 
   afterAll(async () => {
+    // Delete the project explicitly — it may have been moved to top level (outside any fixture folder)
+    try {
+      await runSnippet("delete_project", { id: projectId });
+    } catch (_) { /* already gone */ }
     await cleanupTestFolder(fixtureA.folderId);
     await cleanupTestFolder(fixtureB.folderId);
   });
