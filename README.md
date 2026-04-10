@@ -12,12 +12,9 @@ An MCP server for OmniFocus that exposes the full Omni Automation JavaScript API
 
 ## Install
 
-```bash
-npm install
-npm run build
-```
+The package is published to npm as [`@scardis/omnifocus-mcp`](https://www.npmjs.com/package/@scardis/omnifocus-mcp).
 
-## MCP Client Configuration
+### Via npx (no install required)
 
 Add to your MCP client config (e.g. Claude Desktop `claude_desktop_config.json`):
 
@@ -25,21 +22,30 @@ Add to your MCP client config (e.g. Claude Desktop `claude_desktop_config.json`)
 {
   "mcpServers": {
     "omnifocus": {
-      "command": "node",
-      "args": ["/absolute/path/to/omnifocus-mcp/dist/server.js"]
+      "command": "npx",
+      "args": ["-y", "@scardis/omnifocus-mcp"]
     }
   }
 }
 ```
 
-For development (no build step):
+### From source
+
+```bash
+git clone https://github.com/steveardis/omnifocus-mcp.git
+cd omnifocus-mcp
+npm install
+npm run build
+```
+
+Then configure your MCP client:
 
 ```json
 {
   "mcpServers": {
     "omnifocus": {
-      "command": "npx",
-      "args": ["tsx", "/absolute/path/to/omnifocus-mcp/src/server.ts"]
+      "command": "node",
+      "args": ["/absolute/path/to/omnifocus-mcp/dist/server.js"]
     }
   }
 }
