@@ -9,23 +9,21 @@ const server = new McpServer({
 });
 
 for (const tool of allTools) {
-  // Extract the shape from the zod object schema for registerTool.
-  // .refine() wraps in ZodEffects which has no .shape; unwrap via ._def.schema first.
+  // Unwrap ZodEffects from .refine() to get the underlying ZodObject.
+  // The MCP SDK's zodToJsonSchema handles ZodObject correctly but not ZodEffects.
   const baseSchema =
     tool.inputSchema instanceof z.ZodEffects
       ? (tool.inputSchema._def.schema as z.AnyZodObject)
       : (tool.inputSchema as z.AnyZodObject);
-  const inputShape = baseSchema.shape;
 
   server.registerTool(
     tool.name,
     {
       description: tool.description,
-      inputSchema: inputShape,
+      inputSchema: baseSchema,
     },
     async (args: Record<string, unknown>) => {
       try {
-        // Validate input (already parsed by MCP SDK, re-parse for our shape)
         const input = tool.inputSchema.parse(args);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const result = await (tool.handler as (input: any) => Promise<unknown>)(input);
