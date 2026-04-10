@@ -35,8 +35,10 @@ describe("ProjectSummary schema", () => {
     id: "abc123",
     name: "My Project",
     folderPath: "Work ▸ Projects",
+    folderId: "folder1",
     status: "active",
     type: "parallel",
+    flagged: false,
   };
 
   it("parses a valid summary", () => {

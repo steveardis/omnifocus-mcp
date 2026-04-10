@@ -17,6 +17,7 @@ export {
   ReviewIntervalInput,
   CreateProjectInput,
   EditProjectInput,
+  ListProjectsFilter,
   ProjectSummary,
   ProjectDetail,
   CreateFolderInput,

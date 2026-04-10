@@ -105,12 +105,20 @@ export const EditProjectInput = z.object({
   tagIds: z.array(IdSchema).optional(),
 });
 
+export const ListProjectsFilter = z.object({
+  status: z.array(ProjectStatus).optional(),
+  folderId: IdSchema.optional(),
+  flagged: z.literal(true).optional(),
+});
+
 export const ProjectSummary = z.object({
   id: IdSchema,
   name: z.string(),
   folderPath: z.string(),
+  folderId: IdSchema.nullable(),
   status: ProjectStatus,
   type: ProjectType,
+  flagged: z.boolean(),
 });
 
 export const ProjectDetail = z.object({
