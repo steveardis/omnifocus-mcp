@@ -1,13 +1,15 @@
 /**
- * list_tags.js — List all tags in OmniFocus
+ * list_tags.js — List all tags in OmniFocus with optional filtering
  *
  * PASTE-TO-CONSOLE:
- *   Replace ARGS_PLACEHOLDER with: {} and run in OmniFocus Automation Console.
- *   Example: const args = {};
+ *   Replace ARGS_PLACEHOLDER with one of:
+ *     {}
+ *     { filter: { status: "active" } }
+ *     { limit: 50 }
+ *   Example: const args = { filter: { status: "active" }, limit: 100 };
  */
 (() => {
   const args = __ARGS__;
-  void args; // no args needed for listing
 
   function buildPath(tag) {
     const parts = [];
@@ -29,15 +31,24 @@
     } catch(_) { return "active"; }
   }
 
-  const tags = flattenedTags.map(function(t) {
-    return {
+  const limit = (args.limit !== undefined && args.limit !== null) ? args.limit : 200;
+  const statusFilter = args.filter && args.filter.status ? args.filter.status : null;
+
+  var tags = [];
+  var all = flattenedTags;
+  for (var i = 0; i < all.length; i++) {
+    var t = all[i];
+    var status = tagStatus(t);
+    if (statusFilter && status !== statusFilter) continue;
+    tags.push({
       id: t.id.primaryKey,
       name: t.name,
       path: buildPath(t),
       parentId: t.parent ? t.parent.id.primaryKey : null,
-      status: tagStatus(t),
-    };
-  });
+      status: status,
+    });
+    if (tags.length >= limit) break;
+  }
 
   return JSON.stringify({ ok: true, data: tags });
 })();

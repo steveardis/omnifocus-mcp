@@ -1,10 +1,4 @@
-# folder-management
-
-## Purpose
-
-Defines tools for reading and listing OmniFocus folders, including full folder listing and detail retrieval by ID.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: List folders
 
@@ -25,15 +19,3 @@ The system SHALL provide a `list_folders` tool that returns folders in the OmniF
 #### Scenario: Limit caps the number of returned folders
 - **WHEN** `list_folders` is called with `{ limit: 5 }`
 - **THEN** at most 5 folders are returned
-
-### Requirement: Get folder by ID
-
-The system SHALL provide a `get_folder` tool that accepts `{id: string}` and returns the full detail record of the named folder, including `{id, name, path, parentId, status, childFolderIds, projectIds}`. If no folder exists with that ID, the tool SHALL return a structured not-found error.
-
-#### Scenario: Existing folder returns full detail with children
-- **WHEN** `get_folder` is called with the ID of an existing folder
-- **THEN** the tool returns the folder's full detail including the IDs of its immediate child folders and immediate child projects
-
-#### Scenario: Missing folder returns not-found error
-- **WHEN** `get_folder` is called with an ID that does not correspond to any folder
-- **THEN** the tool returns a structured error with a not-found code

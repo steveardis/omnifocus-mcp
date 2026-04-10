@@ -1,10 +1,4 @@
-# tag-management
-
-## Purpose
-
-Defines tools for reading and listing OmniFocus tags, including hierarchical tag listing and detail retrieval by ID.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: List tags
 
@@ -25,15 +19,3 @@ The system SHALL provide a `list_tags` tool that returns tags in the OmniFocus d
 #### Scenario: Limit caps the number of returned tags
 - **WHEN** `list_tags` is called with `{ limit: 5 }`
 - **THEN** at most 5 tags are returned
-
-### Requirement: Get tag by ID
-
-The system SHALL provide a `get_tag` tool that accepts `{id: string}` and returns the full detail record of the named tag, including `{id, name, path, parentId, status, childTagIds}`. If no tag exists with that ID, the tool SHALL return a structured not-found error.
-
-#### Scenario: Existing tag returns full detail
-- **WHEN** `get_tag` is called with the ID of an existing tag
-- **THEN** the tool returns the tag's full detail including the IDs of its immediate child tags
-
-#### Scenario: Missing tag returns not-found error
-- **WHEN** `get_tag` is called with an ID that does not correspond to any tag
-- **THEN** the tool returns a structured error with a not-found code

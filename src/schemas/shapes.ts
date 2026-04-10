@@ -121,6 +121,14 @@ export const MoveProjectInput = z.object({
   folderId: IdSchema.nullable(),
 });
 
+export const ListFoldersFilter = z.object({
+  status: FolderStatus.optional(),
+});
+
+export const ListTagsFilter = z.object({
+  status: TagStatus.optional(),
+});
+
 export const ListProjectsFilter = z.object({
   status: z.array(ProjectStatus).optional(),
   folderId: IdSchema.optional(),
