@@ -92,6 +92,7 @@
       status: taskStatus(task),
       flagged: task.flagged || false,
       deferDate: isoOrNull(task.deferDate),
+      plannedDate: isoOrNull(task.plannedDate),
       dueDate: isoOrNull(task.dueDate),
       completionDate: isoOrNull(task.completionDate),
       estimatedMinutes: task.estimatedMinutes || null,
@@ -112,6 +113,9 @@
 
   if ("deferDate" in args) {
     task.deferDate = args.deferDate ? new Date(args.deferDate) : null;
+  }
+  if ("plannedDate" in args) {
+    task.plannedDate = args.plannedDate ? new Date(args.plannedDate) : null;
   }
   if ("dueDate" in args) {
     task.dueDate = args.dueDate ? new Date(args.dueDate) : null;

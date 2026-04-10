@@ -1,10 +1,4 @@
-# task-write
-
-## Purpose
-
-TBD — Defines tools for creating and mutating OmniFocus tasks, including create, edit, complete, drop, and delete operations.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Create task
 
@@ -73,43 +67,3 @@ The system SHALL provide an `edit_task` tool that modifies an existing task and 
 #### Scenario: Clear repetition via edit
 - **WHEN** `edit_task` is called with `{ id: "t1", repetitionRule: null }`
 - **THEN** the task's recurrence is cleared and all other fields are unchanged
-
-### Requirement: Complete task
-
-The system SHALL provide a `complete_task` tool that marks an existing task complete using OmniJS `markComplete()` and returns the task's updated full detail record.
-
-#### Scenario: Complete an existing task
-- **WHEN** `complete_task` is called with the ID of an available task
-- **THEN** the task's status becomes `"complete"` and the tool returns the updated detail record
-
-#### Scenario: Non-existent task returns not-found error
-- **WHEN** `complete_task` is called with an ID that does not correspond to any task
-- **THEN** the tool returns a structured not-found error
-
-### Requirement: Drop task
-
-The system SHALL provide a `drop_task` tool that marks an existing task dropped using OmniJS `drop()` and returns the task's updated full detail record.
-
-#### Scenario: Drop an existing task
-- **WHEN** `drop_task` is called with the ID of an available task
-- **THEN** the task's status becomes `"dropped"` and the tool returns the updated detail record
-
-#### Scenario: Non-existent task returns not-found error
-- **WHEN** `drop_task` is called with an ID that does not correspond to any task
-- **THEN** the tool returns a structured not-found error
-
-### Requirement: Delete task
-
-The system SHALL provide a `delete_task` tool that permanently deletes a task and all its subtasks using OmniJS `deleteObject()`. The tool description SHALL instruct the AI to confirm with the user before invoking this tool, noting that deletion is permanent and includes all subtasks.
-
-#### Scenario: Delete an existing task
-- **WHEN** `delete_task` is called with the ID of an existing task
-- **THEN** the task and all its subtasks are permanently removed from OmniFocus and the tool returns a confirmation envelope
-
-#### Scenario: Delete task with subtasks removes all children
-- **WHEN** `delete_task` is called with the ID of a task that has subtasks
-- **THEN** the task and all descendant subtasks are deleted
-
-#### Scenario: Non-existent task returns not-found error
-- **WHEN** `delete_task` is called with an ID that does not correspond to any task
-- **THEN** the tool returns a structured not-found error

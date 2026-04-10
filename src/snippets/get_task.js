@@ -81,6 +81,7 @@
     status: taskStatus(task),
     flagged: task.flagged || false,
     deferDate: isoOrNull(task.deferDate),
+    plannedDate: isoOrNull(task.plannedDate),
     dueDate: isoOrNull(task.dueDate),
     completionDate: isoOrNull(task.completionDate),
     estimatedMinutes: task.estimatedMinutes || null,

@@ -105,6 +105,7 @@
       status: taskStatus(task),
       flagged: task.flagged || false,
       deferDate: isoOrNull(task.deferDate),
+      plannedDate: isoOrNull(task.plannedDate),
       dueDate: isoOrNull(task.dueDate),
       completionDate: isoOrNull(task.completionDate),
       estimatedMinutes: task.estimatedMinutes || null,
@@ -138,6 +139,7 @@
   if (args.note !== undefined) task.note = args.note;
   if (args.flagged !== undefined) task.flagged = args.flagged;
   if (args.deferDate !== undefined && args.deferDate !== null) task.deferDate = new Date(args.deferDate);
+  if (args.plannedDate !== undefined && args.plannedDate !== null) task.plannedDate = new Date(args.plannedDate);
   if (args.dueDate !== undefined && args.dueDate !== null) task.dueDate = new Date(args.dueDate);
   if (args.estimatedMinutes !== undefined && args.estimatedMinutes !== null) task.estimatedMinutes = args.estimatedMinutes;
 
