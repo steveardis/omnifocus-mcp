@@ -41,7 +41,7 @@ None. This is a clean-slate project with no prior specs.
 
 ## Impact
 
-- **New repository structure** under `/Users/scardis/projects-personal/omnifocus-mcp/` with TypeScript toolchain, MCP SDK, zod, vitest.
+- **New repository structure** with TypeScript toolchain, MCP SDK, zod, vitest.
 - **Runtime dependency on macOS** (`osascript`) and a running OmniFocus instance. The server is macOS-only by nature of the Omni Automation platform.
 - **Integration tests mutate a real OmniFocus database.** Mitigated by fixture-folder scoping and a sync-enabled preflight check. Documented loudly in the README.
 - **No CI coverage for integration tests.** CI runs unit tests only (snippet injection, zod schema validation, result-protocol parsing). Integration is local-developer-only.
