@@ -9,8 +9,13 @@ const server = new McpServer({
 });
 
 for (const tool of allTools) {
-  // Extract the shape from the zod object schema for registerTool
-  const inputShape = (tool.inputSchema as z.AnyZodObject).shape;
+  // Extract the shape from the zod object schema for registerTool.
+  // .refine() wraps in ZodEffects which has no .shape; unwrap via ._def.schema first.
+  const baseSchema =
+    tool.inputSchema instanceof z.ZodEffects
+      ? (tool.inputSchema._def.schema as z.AnyZodObject)
+      : (tool.inputSchema as z.AnyZodObject);
+  const inputShape = baseSchema.shape;
 
   server.registerTool(
     tool.name,
