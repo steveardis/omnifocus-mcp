@@ -23,6 +23,8 @@ export { deleteFolderTool } from "./deleteFolder.js";
 export { createTagTool } from "./createTag.js";
 export { editTagTool } from "./editTag.js";
 export { deleteTagTool } from "./deleteTag.js";
+export { moveTaskTool } from "./moveTask.js";
+export { moveProjectTool } from "./moveProject.js";
 
 import { listProjectsTool } from "./listProjects.js";
 import { getProjectTool } from "./getProject.js";
@@ -49,6 +51,8 @@ import { deleteFolderTool } from "./deleteFolder.js";
 import { createTagTool } from "./createTag.js";
 import { editTagTool } from "./editTag.js";
 import { deleteTagTool } from "./deleteTag.js";
+import { moveTaskTool } from "./moveTask.js";
+import { moveProjectTool } from "./moveProject.js";
 
 export const allTools = [
   listProjectsTool,
@@ -76,4 +80,6 @@ export const allTools = [
   createTagTool,
   editTagTool,
   deleteTagTool,
+  moveTaskTool,
+  moveProjectTool,
 ] as const;

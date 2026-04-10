@@ -34,6 +34,8 @@ const ALLOWED_SNIPPETS = new Set([
   "create_tag",
   "edit_tag",
   "delete_tag",
+  "move_task",
+  "move_project",
 ]);
 
 const cache = new Map<string, string>();

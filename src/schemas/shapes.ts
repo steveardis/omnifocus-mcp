@@ -105,6 +105,22 @@ export const EditProjectInput = z.object({
   tagIds: z.array(IdSchema).optional(),
 });
 
+export const MoveTaskInput = z
+  .object({
+    id: IdSchema,
+    projectId: IdSchema.optional(),
+    parentTaskId: IdSchema.optional(),
+  })
+  .refine(
+    (d) => (d.projectId !== undefined) !== (d.parentTaskId !== undefined),
+    { message: "Exactly one of projectId or parentTaskId must be provided" }
+  );
+
+export const MoveProjectInput = z.object({
+  id: IdSchema,
+  folderId: IdSchema.nullable(),
+});
+
 export const ListProjectsFilter = z.object({
   status: z.array(ProjectStatus).optional(),
   folderId: IdSchema.optional(),
