@@ -1,8 +1,9 @@
 {
-  "name": "omnifocus-mcp",
+  "name": "@scardis/omnifocus-mcp",
   "version": "0.1.0",
   "description": "MCP server for OmniFocus via Omni Automation JavaScript API",
   "license": "MIT",
+  "mcpName": "io.github.steveardis/omnifocus",
   "type": "module",
   "engines": {
     "node": ">=20"
