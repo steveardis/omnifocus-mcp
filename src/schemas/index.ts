@@ -10,6 +10,7 @@ export {
 
 export {
   TaskSummary,
+  ListTasksFilter,
   TaskDetail,
   CreateTaskInput,
   EditTaskInput,

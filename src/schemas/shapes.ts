@@ -18,6 +18,15 @@ export const TaskSummary = z.object({
   flagged: z.boolean(),
   containerId: IdSchema.nullable(),
   containerType: z.enum(["project", "inbox", "task"]).nullable(),
+  dueDate: z.string().datetime().nullable(),
+  tagIds: z.array(IdSchema),
+});
+
+export const ListTasksFilter = z.object({
+  flagged: z.literal(true).optional(),
+  status: z.array(TaskStatus).optional(),
+  tagId: IdSchema.optional(),
+  dueBeforeDate: z.string().datetime().optional(),
 });
 
 export const TaskDetail = z.object({

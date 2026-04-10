@@ -62,6 +62,8 @@ describe("TaskSummary schema", () => {
     flagged: false,
     containerId: "p1",
     containerType: "project",
+    dueDate: null,
+    tagIds: [],
   };
 
   it("parses a valid task summary", () => {
