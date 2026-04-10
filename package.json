@@ -2,6 +2,7 @@
   "name": "omnifocus-mcp",
   "version": "0.1.0",
   "description": "MCP server for OmniFocus via Omni Automation JavaScript API",
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=20"

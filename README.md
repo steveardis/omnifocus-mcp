@@ -47,29 +47,48 @@ For development (no build step):
 
 ## Available Tools
 
-### This release (read-only, proving the JXA→OmniJS bridge)
+### Read
 
 | Tool | Description |
 |---|---|
-| `list_projects` | All projects — id, name, folder path, status, type |
+| `list_projects` | Projects with optional filtering by status, folderId, flagged. Default excludes done/dropped. Limit (default 100). |
 | `get_project` | Full project detail by stable ID |
-| `list_folders` | All folders — id, name, full path (ancestors joined with `▸`), parentId, status |
+| `list_tasks` | Tasks scoped by `projectId`, `folderId`, `inbox: true`, or `all: true` with optional status/tag/due/flagged filters. Limit (default 200). |
+| `get_task` | Full task detail by stable ID — includes defer/planned/due dates, tags, repetition rule, parentTaskId |
+| `list_folders` | Folders with optional status filter. Limit (default 200). |
 | `get_folder` | Full folder detail by stable ID, including child folder and project IDs |
-| `list_tasks` | Tasks scoped by `projectId`, `folderId`, `inbox: true`, or `all: true` |
-| `get_task` | Full task detail by stable ID, including defer/due dates and tag IDs |
-| `list_tags` | All tags — id, name, full path, parentId, status |
+| `list_tags` | Tags with optional status filter. Limit (default 200). |
 | `get_tag` | Full tag detail by stable ID, including child tag IDs |
 | `resolve_name` | Resolve a name to stable ID candidates — **never silently disambiguates**; returns all matches |
+
+### Write
+
+| Tool | Description |
+|---|---|
+| `create_task` | Create a task in inbox, project, or as subtask. Supports defer/planned/due dates, tags, flagged, estimated minutes, and repetition rules. |
+| `edit_task` | Edit any task field. Pass `null` to clear dates or repetition. Omitted fields are unchanged. |
+| `complete_task` | Mark a task complete |
+| `drop_task` | Mark a task dropped |
+| `delete_task` | Permanently delete a task and all subtasks |
+| `create_project` | Create a project, optionally in a folder. Supports type, status, review interval, tags. |
+| `edit_project` | Edit project fields |
+| `complete_project` | Mark a project complete |
+| `drop_project` | Mark a project dropped |
+| `delete_project` | Permanently delete a project and all its tasks |
+| `create_folder` | Create a folder, optionally nested |
+| `edit_folder` | Rename a folder |
+| `delete_folder` | Permanently delete a folder and entire subtree |
+| `create_tag` | Create a tag, optionally nested |
+| `edit_tag` | Edit tag name or status |
+| `delete_tag` | Permanently delete a tag and child tags |
+| `move_task` | Move a task to a project or make it a subtask of another task |
+| `move_project` | Move a project to a folder or to top level |
 
 ### Addressing model
 
 Every entity returned by this server includes a stable `id` field (`id.primaryKey` from OmniFocus). Use this ID in subsequent calls rather than names. Names can be ambiguous; IDs are not.
 
 If you have a name but not an ID, use `resolve_name`. It returns a list — if multiple candidates are returned, inspect the `path` field and ask the user to disambiguate before proceeding with any write operation.
-
-### Coming in subsequent releases
-
-Full CRUD on tasks, projects, folders, and tags; recurrence rules; perspectives and window state; forecast; batch operations; attachments; URL automation; settings.
 
 ## Comparison with other OmniFocus MCP servers
 
@@ -83,9 +102,7 @@ Two notable alternatives exist:
 
 **Entity addressing.** The alternatives address entities primarily by name. This server returns a stable `id` (`id.primaryKey`) for every entity and provides `resolve_name` to map a name to ID candidates — returning all matches with full paths rather than silently picking one when names are ambiguous.
 
-**Read-only (current release).** The alternatives support creating, editing, and deleting tasks and projects today. This server is read-only in this release; full CRUD is planned for the next release.
-
-**Fewer tools (current release).** The enhanced fork has 18 tools including forecast, flagged tasks, task move, attachment reading, and custom perspectives. This server currently has 9.
+**Full CRUD.** This server supports creating, editing, completing, dropping, deleting, and moving tasks, projects, folders, and tags — plus repetition rules and OmniFocus 4's planned date.
 
 ## Development
 
@@ -134,4 +151,48 @@ MCP_TEST_ALLOW_SYNC=1 npm run test:integration
 npm run test:cleanup-fixtures
 ```
 
-This removes any `__MCP_TEST_*__` folders left in OmniFocus from interrupted test runs.
+This removes any `__MCP_TEST_*__` folders and orphaned `__mcp_*__` projects/tags left in OmniFocus from interrupted test runs.
+
+## Contributing
+
+Contributions are welcome! Here's how to get started:
+
+1. **Fork and clone** the repo
+2. **Install dependencies:** `npm install`
+3. **Run unit tests** (no OmniFocus needed): `npm test`
+4. **Run integration tests** (requires macOS + OmniFocus): `npm run test:integration`
+
+### Before submitting a PR
+
+- `npm run typecheck` — must pass with no errors
+- `npm test` — all unit tests must pass
+- `npm run test:integration` — all integration tests must pass (macOS only)
+- Keep changes focused — one feature or fix per PR
+
+### Architecture overview
+
+The server runs OmniJS snippets inside OmniFocus via `osascript -l JavaScript`. Each tool has three layers:
+
+- **Schema** (`src/schemas/shapes.ts`) — Zod schemas for input validation and output parsing
+- **Snippet** (`src/snippets/*.js`) — OmniJS code that runs inside OmniFocus. Plain ES5 JavaScript (no imports, no TypeScript). Arguments are injected via `__ARGS__` placeholder.
+- **Tool handler** (`src/tools/*.ts`) — Validates input, calls `runSnippet()`, parses the result
+
+When adding a new tool:
+1. Define input/output schemas in `src/schemas/shapes.ts` and export from `src/schemas/index.ts`
+2. Create the OmniJS snippet in `src/snippets/`
+3. Add the snippet name to `ALLOWED_SNIPPETS` in `src/runtime/snippetLoader.ts`
+4. Create the tool handler in `src/tools/` and register it in `src/tools/index.ts`
+5. Add unit tests for schemas and integration tests that run against OmniFocus
+
+### Writing OmniJS snippets
+
+Snippets run inside OmniFocus's JavaScript runtime, not Node.js. Key constraints:
+
+- **ES5-style JavaScript** — use `var`, `function(){}`, no arrow functions in older OmniFocus versions
+- **No imports** — all OmniJS globals (`flattenedTasks`, `flattenedProjects`, `moveTasks`, etc.) are available directly
+- **Return JSON** — always `return JSON.stringify({ ok: true, data: ... })`
+- **Error pattern** — throw named errors (`NotFoundError`, `ValidationError`) which the bridge catches and wraps
+
+## License
+
+[MIT](LICENSE)
