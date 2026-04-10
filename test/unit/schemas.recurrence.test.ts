@@ -36,28 +36,6 @@ describe("RepetitionRuleInput schema", () => {
     expect(result.interval).toBe(1);
   });
 
-  it("rejects daysOfWeek on non-weekly frequency", () => {
-    expect(() =>
-      RepetitionRuleInput.parse({
-        frequency: "daily",
-        interval: 1,
-        daysOfWeek: ["monday"],
-        method: "fixed",
-      })
-    ).toThrow();
-  });
-
-  it("rejects daysOfWeek on monthly frequency", () => {
-    expect(() =>
-      RepetitionRuleInput.parse({
-        frequency: "monthly",
-        interval: 1,
-        daysOfWeek: ["tuesday"],
-        method: "fixed",
-      })
-    ).toThrow();
-  });
-
   it("rejects interval of zero", () => {
     expect(() =>
       RepetitionRuleInput.parse({ frequency: "daily", interval: 0, method: "fixed" })

@@ -15,17 +15,12 @@ const RepetitionFrequency = z.enum(["daily", "weekly", "monthly", "yearly"]);
 const RepetitionMethod = z.enum(["fixed", "dueDate", "start"]);
 const DayOfWeek = z.enum(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]);
 
-export const RepetitionRuleInput = z
-  .object({
-    frequency: RepetitionFrequency,
-    interval: z.number().int().positive().default(1),
-    daysOfWeek: z.array(DayOfWeek).optional(),
-    method: RepetitionMethod,
-  })
-  .refine(
-    (d) => d.daysOfWeek === undefined || d.frequency === "weekly",
-    { message: "daysOfWeek is only valid when frequency is 'weekly'" }
-  );
+export const RepetitionRuleInput = z.object({
+  frequency: RepetitionFrequency,
+  interval: z.number().int().positive().default(1),
+  daysOfWeek: z.array(DayOfWeek).optional().describe("Only valid when frequency is 'weekly'"),
+  method: RepetitionMethod,
+});
 
 export const RepetitionRuleDetail = z.object({
   frequency: RepetitionFrequency,
