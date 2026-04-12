@@ -65,6 +65,8 @@ describe("TaskSummary schema", () => {
     containerId: "p1",
     containerType: "project",
     dueDate: null,
+    deferDate: null,
+    plannedDate: null,
     tagIds: [],
   };
 

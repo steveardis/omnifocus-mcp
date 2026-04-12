@@ -45,6 +45,13 @@ describe("list_tasks filtering (integration)", () => {
     });
     // plain task (no flags, no tags, no due date)
     await runSnippet("create_task", { name: "Plain Task", projectId });
+    // task with defer date and planned date
+    await runSnippet("create_task", {
+      name: "Deferred Task",
+      projectId,
+      deferDate: "2026-04-12T08:00:00.000Z",
+      plannedDate: "2026-04-12T09:00:00.000Z",
+    });
   });
 
   afterAll(async () => {
@@ -137,5 +144,35 @@ describe("list_tasks filtering (integration)", () => {
     });
     const tasks = TaskSummaryArray.parse(raw);
     expect(tasks.length).toBeLessThanOrEqual(1);
+  });
+
+  it("hasDeferDate filter returns only tasks with a defer date", async () => {
+    const raw = await runSnippet("list_tasks", {
+      scope: { projectId },
+      filter: { hasDeferDate: true },
+    });
+    const tasks = TaskSummaryArray.parse(raw);
+    expect(tasks.length).toBeGreaterThan(0);
+    expect(tasks.every((t) => t.deferDate !== null)).toBe(true);
+    expect(tasks.some((t) => t.name === "Deferred Task")).toBe(true);
+    expect(tasks.some((t) => t.name === "Flagged Task")).toBe(false);
+  });
+
+  it("summary includes deferDate and plannedDate", async () => {
+    const raw = await runSnippet("list_tasks", { scope: { projectId } });
+    const tasks = TaskSummaryArray.parse(raw);
+    const deferred = tasks.find((t) => t.name === "Deferred Task");
+    expect(deferred).toBeDefined();
+    expect(deferred!.deferDate).toBe("2026-04-12T08:00:00.000Z");
+    expect(deferred!.plannedDate).toBe("2026-04-12T09:00:00.000Z");
+  });
+
+  it("tasks without defer/planned date return null for those fields", async () => {
+    const raw = await runSnippet("list_tasks", { scope: { projectId } });
+    const tasks = TaskSummaryArray.parse(raw);
+    const flagged = tasks.find((t) => t.name === "Flagged Task");
+    expect(flagged).toBeDefined();
+    expect(flagged!.deferDate).toBeNull();
+    expect(flagged!.plannedDate).toBeNull();
   });
 });

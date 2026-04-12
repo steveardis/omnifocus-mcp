@@ -39,6 +39,8 @@ export const TaskSummary = z.object({
   containerId: IdSchema.nullable(),
   containerType: z.enum(["project", "inbox", "task"]).nullable(),
   dueDate: z.string().datetime().nullable(),
+  deferDate: z.string().datetime().nullable(),
+  plannedDate: z.string().datetime().nullable(),
   tagIds: z.array(IdSchema),
 });
 
@@ -47,6 +49,7 @@ export const ListTasksFilter = z.object({
   status: z.array(TaskStatus).optional(),
   tagId: IdSchema.optional(),
   dueBeforeDate: z.string().datetime().optional(),
+  hasDeferDate: z.literal(true).optional().describe("Return only tasks that have a defer date set"),
 });
 
 export const TaskDetail = z.object({

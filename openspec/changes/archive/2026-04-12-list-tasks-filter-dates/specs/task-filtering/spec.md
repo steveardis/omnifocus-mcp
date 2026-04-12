@@ -1,4 +1,4 @@
-## ADDED Requirements
+## MODIFIED Requirements
 
 ### Requirement: Filter list_tasks results
 
@@ -42,18 +42,6 @@ Filter fields:
 #### Scenario: Combined filters act as AND
 - **WHEN** `list_tasks` is called with `{ filter: { flagged: true, tagId: "tag456" } }`
 - **THEN** the tool returns only tasks that are both flagged AND have that tag
-
-### Requirement: Limit list_tasks results
-
-The system SHALL allow `list_tasks` to accept an optional `limit` integer that caps the number of tasks returned. When `limit` is omitted, a default of 200 SHALL apply.
-
-#### Scenario: Default limit of 200
-- **WHEN** `list_tasks` is called without a `limit` and more than 200 tasks match
-- **THEN** the tool returns at most 200 tasks
-
-#### Scenario: Custom limit
-- **WHEN** `list_tasks` is called with `{ limit: 50 }`
-- **THEN** the tool returns at most 50 tasks
 
 ### Requirement: Enriched task summary includes dueDate, deferDate, plannedDate, and tagIds
 

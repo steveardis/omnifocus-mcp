@@ -48,6 +48,8 @@
       containerId: ci.containerId,
       containerType: overrideContainerType || ci.containerType,
       dueDate: task.dueDate ? task.dueDate.toISOString() : null,
+      deferDate: task.deferDate ? task.deferDate.toISOString() : null,
+      plannedDate: task.plannedDate ? task.plannedDate.toISOString() : null,
       tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
     };
   }
@@ -114,6 +116,10 @@
     tasks = tasks.filter(function(t) {
       return t.dueDate !== null && new Date(t.dueDate) <= cutoff;
     });
+  }
+
+  if (filter.hasDeferDate === true) {
+    tasks = tasks.filter(function(t) { return t.deferDate !== null; });
   }
 
   // ── Limit ───────────────────────────────────────────────────────────────────

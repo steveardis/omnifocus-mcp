@@ -107,6 +107,8 @@
       containerId: ci.containerId,
       containerType: ci.containerType,
       dueDate: movedTask.dueDate ? movedTask.dueDate.toISOString() : null,
+      deferDate: movedTask.deferDate ? movedTask.deferDate.toISOString() : null,
+      plannedDate: movedTask.plannedDate ? movedTask.plannedDate.toISOString() : null,
       tagIds: (movedTask.tags || []).map(function(t) { return t.id.primaryKey; }),
     },
   });
