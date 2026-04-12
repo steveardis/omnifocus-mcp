@@ -14,7 +14,7 @@ export async function editTaskHandler(
 export const editTaskTool = {
   name: "edit_task",
   description:
-    "Edit an existing task by its stable ID. Only fields included in the call are changed; omitted fields are left unchanged. When tagIds is provided it replaces the full tag set. Pass null for deferDate, plannedDate, dueDate, or estimatedMinutes to clear those fields. To set a repetition rule, pass repetitionRule with frequency/interval/method. To clear repetition, pass clearRepetitionRule: true.",
+    "Edit an existing task by its stable ID. Only fields included in the call are changed; omitted fields are left unchanged. When tagIds is provided it replaces the full tag set. To clear a date field, pass clearDeferDate, clearPlannedDate, or clearDueDate set to true. Pass null for estimatedMinutes to clear it. To set a repetition rule, pass repetitionRule with frequency/interval/method. To clear repetition, pass clearRepetitionRule: true.",
   inputSchema: EditTaskInput,
   handler: editTaskHandler,
 } as const;

@@ -96,3 +96,41 @@ describe("EditTaskInput with repetitionRule", () => {
     ).not.toThrow();
   });
 });
+
+describe("EditTaskInput clear date flags", () => {
+  it("accepts clearDeferDate: true", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc", clearDeferDate: true })
+    ).not.toThrow();
+  });
+
+  it("accepts clearPlannedDate: true", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc", clearPlannedDate: true })
+    ).not.toThrow();
+  });
+
+  it("accepts clearDueDate: true", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc", clearDueDate: true })
+    ).not.toThrow();
+  });
+
+  it("accepts setting a date string (no clear flag)", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc", dueDate: "2026-04-15T09:00:00.000Z" })
+    ).not.toThrow();
+  });
+
+  it("rejects null for deferDate (must use clearDeferDate flag)", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc", deferDate: null })
+    ).toThrow();
+  });
+
+  it("rejects null for dueDate (must use clearDueDate flag)", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc", dueDate: null })
+    ).toThrow();
+  });
+});

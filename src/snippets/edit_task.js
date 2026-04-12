@@ -111,14 +111,20 @@
   if (args.note !== undefined) task.note = args.note;
   if (args.flagged !== undefined) task.flagged = args.flagged;
 
-  if ("deferDate" in args) {
-    task.deferDate = args.deferDate ? new Date(args.deferDate) : null;
+  if (args.clearDeferDate === true) {
+    task.deferDate = null;
+  } else if (args.deferDate !== undefined) {
+    task.deferDate = new Date(args.deferDate);
   }
-  if ("plannedDate" in args) {
-    task.plannedDate = args.plannedDate ? new Date(args.plannedDate) : null;
+  if (args.clearPlannedDate === true) {
+    task.plannedDate = null;
+  } else if (args.plannedDate !== undefined) {
+    task.plannedDate = new Date(args.plannedDate);
   }
-  if ("dueDate" in args) {
-    task.dueDate = args.dueDate ? new Date(args.dueDate) : null;
+  if (args.clearDueDate === true) {
+    task.dueDate = null;
+  } else if (args.dueDate !== undefined) {
+    task.dueDate = new Date(args.dueDate);
   }
   if ("estimatedMinutes" in args) {
     task.estimatedMinutes = args.estimatedMinutes;

@@ -53,7 +53,7 @@ describe("plannedDate (integration)", () => {
     expect(created.plannedDate).not.toBeNull();
 
     const cleared = TaskDetail.parse(
-      await runSnippet("edit_task", { id: created.id, plannedDate: null })
+      await runSnippet("edit_task", { id: created.id, clearPlannedDate: true })
     );
     expect(cleared.plannedDate).toBeNull();
 

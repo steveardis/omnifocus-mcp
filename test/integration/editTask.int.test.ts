@@ -35,10 +35,26 @@ describe("edit_task (integration)", () => {
     expect(task.flagged).toBe(true);
   });
 
-  it("clears due date with null", async () => {
-    const raw = await runSnippet("edit_task", { id: taskId, dueDate: null });
+  it("clears due date via clearDueDate flag", async () => {
+    // First set a due date
+    await runSnippet("edit_task", { id: taskId, dueDate: "2026-12-31T00:00:00.000Z" });
+    const raw = await runSnippet("edit_task", { id: taskId, clearDueDate: true });
     const task = TaskDetail.parse(raw);
     expect(task.dueDate).toBeNull();
+  });
+
+  it("clears defer date via clearDeferDate flag", async () => {
+    await runSnippet("edit_task", { id: taskId, deferDate: "2026-12-01T00:00:00.000Z" });
+    const raw = await runSnippet("edit_task", { id: taskId, clearDeferDate: true });
+    const task = TaskDetail.parse(raw);
+    expect(task.deferDate).toBeNull();
+  });
+
+  it("clears planned date via clearPlannedDate flag", async () => {
+    await runSnippet("edit_task", { id: taskId, plannedDate: "2026-12-15T00:00:00.000Z" });
+    const raw = await runSnippet("edit_task", { id: taskId, clearPlannedDate: true });
+    const task = TaskDetail.parse(raw);
+    expect(task.plannedDate).toBeNull();
   });
 
   it("replaces tag set", async () => {

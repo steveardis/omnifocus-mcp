@@ -59,16 +59,16 @@ describe("EditTaskInput schema", () => {
     ).not.toThrow();
   });
 
-  it("accepts null deferDate to clear the field", () => {
+  it("rejects null deferDate (use clearDeferDate flag instead)", () => {
     expect(() =>
       EditTaskInput.parse({ id: "abc123", deferDate: null })
-    ).not.toThrow();
+    ).toThrow();
   });
 
-  it("accepts null dueDate", () => {
+  it("rejects null dueDate (use clearDueDate flag instead)", () => {
     expect(() =>
       EditTaskInput.parse({ id: "abc123", dueDate: null })
-    ).not.toThrow();
+    ).toThrow();
   });
 
   it("accepts null estimatedMinutes", () => {
