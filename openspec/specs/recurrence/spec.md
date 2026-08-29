@@ -8,7 +8,7 @@ Covers the construction, assignment, reading, and clearing of `Task.RepetitionRu
 
 ### Requirement: Capability declared
 
-The `recurrence` capability covers the construction, assignment, reading, and clearing of `Task.RepetitionRule` values on OmniFocus tasks. The capability exposes a structured schema matching the OmniFocus UI surface: `frequency` (`daily` | `weekly` | `monthly` | `yearly`), `interval` (every N units, ≥1), `daysOfWeek` (weekly only, any subset of the 7 days), and `method` (`fixed` | `dueDate` | `start`). Repetition is set and cleared through `create_task` and `edit_task`; the current rule is returned by `get_task` as structured fields parsed from the underlying RRULE. Raw RRULE strings are not exposed as input — all recurrence is expressed through the structured schema.
+The `recurrence` capability SHALL cover the construction, assignment, reading, and clearing of `Task.RepetitionRule` values on OmniFocus tasks. The capability SHALL expose a structured schema matching the OmniFocus UI surface: `frequency` (`daily` | `weekly` | `monthly` | `yearly`), `interval` (every N units, ≥1), `daysOfWeek` (weekly only, any subset of the 7 days), and `method` (`fixed` | `dueDate` | `start`). Repetition SHALL be set and cleared through `create_task` and `edit_task`, and the current rule SHALL be returned by `get_task` as structured fields parsed from the underlying RRULE. Raw RRULE strings SHALL NOT be accepted as input; all recurrence SHALL be expressed through the structured schema.
 
 #### Scenario: Capability is named and scoped
 - **WHEN** a change proposes adding or modifying recurrence-related behavior
