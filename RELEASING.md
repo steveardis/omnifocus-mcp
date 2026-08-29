@@ -80,7 +80,17 @@ Do not trust the local build. Check the published artifact:
 ```
 npm pack @scardis/omnifocus-mcp@X.Y.Z
 tar tzf scardis-omnifocus-mcp-X.Y.Z.tgz | grep -c 'dist/snippets/.*\.js'   # expect 27
+tar xzf scardis-omnifocus-mcp-X.Y.Z.tgz && head -1 package/dist/server.js  # expect #!/usr/bin/env node
 ```
+
+Both checks matter, and each corresponds to a version that shipped broken.
+
+The shebang matters because `package.json` declares `dist/server.js` as the
+`bin` entry, so `npx` executes it directly rather than through `node`. Without
+`#!/usr/bin/env node` as the first line of `src/server.ts`, the shell runs it as
+a shell script and every import fails with `import: command not found`. Versions
+up to and including 0.2.0 shipped without it, so the `npx` install path in the
+README did not work at all.
 
 The snippet count matters. `tsc` compiles only TypeScript, so the plain `.js`
 files in `src/snippets/` reach `dist/` solely through the `copy:snippets` step
