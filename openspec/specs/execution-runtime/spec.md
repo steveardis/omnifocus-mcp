@@ -52,7 +52,9 @@ The system SHALL represent every bridge invocation's result as exactly one line 
 
 ### Requirement: Snippet loader
 
-The system SHALL load snippet templates from `src/snippets/<name>.js` relative to the compiled server's known snippet root, caching the file contents in memory after the first read. The loader SHALL reject snippets that do not contain exactly one `__ARGS__` token.
+Snippet templates SHALL be authored as plain `.js` files in `src/snippets/<name>.js` and SHALL be resolved at runtime from `<snippet root>/<name>.js`, where the snippet root is the `snippets/` directory sitting as a sibling of the loader's own compiled location (`dist/snippets/` for a built server, `src/snippets/` when running from source). The loader SHALL cache the file contents in memory after the first read, and SHALL reject snippets that do not contain exactly one `__ARGS__` token.
+
+The build SHALL copy every allowlisted snippet from `src/snippets/` into the compiled snippet root, because `tsc` emits only TypeScript sources and would otherwise leave the built server with no snippets to load. The distributed package SHALL contain the compiled snippet root and SHALL NOT rely on `src/` being present.
 
 #### Scenario: Snippet is loaded and cached
 - **WHEN** a tool handler invokes the runtime with snippet name `"list_projects"` twice in the same process
@@ -65,6 +67,14 @@ The system SHALL load snippet templates from `src/snippets/<name>.js` relative t
 #### Scenario: Snippet with multiple placeholders is rejected
 - **WHEN** a snippet file contains two or more `__ARGS__` tokens
 - **THEN** the loader throws a contract violation at load time
+
+#### Scenario: A built server loads snippets without the source tree
+- **WHEN** the project is built and the resulting package is installed somewhere that has no `src/` directory
+- **THEN** every allowlisted snippet resolves from the compiled snippet root and every tool call executes, rather than failing with "snippet could not be loaded"
+
+#### Scenario: An allowlisted snippet has no source file
+- **WHEN** the build runs while a name in the loader's allowlist has no matching file in `src/snippets/`
+- **THEN** the build fails and names the missing snippets, rather than producing a package that fails at the first call to that tool
 
 ### Requirement: Script timeout
 
