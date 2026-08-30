@@ -67,6 +67,8 @@ describe("TaskSummary schema", () => {
     dueDate: null,
     deferDate: null,
     plannedDate: null,
+    completionDate: null,
+    dropDate: null,
     tagIds: [],
   };
 
@@ -79,7 +81,8 @@ describe("TaskSummary schema", () => {
     const detailBase = {
       id: "t1", name: "Buy milk", note: "", status: "available",
       flagged: false, deferDate: null, dueDate: null, completionDate: null,
-      estimatedMinutes: null, containerId: "p1", containerType: "project",
+      dropDate: null, estimatedMinutes: null, containerId: "p1", containerType: "project",
+      sequential: false,
     };
     expect(() =>
       TaskDetail.parse({ ...detailBase, tagIds: '["abc"]' })

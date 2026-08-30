@@ -30,12 +30,16 @@
   }
 
   function containerInfo(task) {
-    if (!task.assignedContainer) return { containerId: null, containerType: null };
-    var c = task.assignedContainer;
-    if (c instanceof Project) {
-      return { containerId: c.id.primaryKey, containerType: "project" };
+    // Use parentTask and containingProject rather than assignedContainer —
+    // assignedContainer reflects original placement and doesn't update after moveTasks,
+    // and comes back null for completed tasks.
+    if (task.parentTask) {
+      return { containerId: task.parentTask.id.primaryKey, containerType: "task" };
     }
-    return { containerId: c.id.primaryKey, containerType: "task" };
+    if (task.containingProject) {
+      return { containerId: task.containingProject.id.primaryKey, containerType: "project" };
+    }
+    return { containerId: null, containerType: null };
   }
 
   function mapTask(task, overrideContainerType) {
@@ -50,6 +54,8 @@
       dueDate: task.dueDate ? task.dueDate.toISOString() : null,
       deferDate: task.deferDate ? task.deferDate.toISOString() : null,
       plannedDate: task.plannedDate ? task.plannedDate.toISOString() : null,
+      completionDate: task.effectiveCompletedDate ? task.effectiveCompletedDate.toISOString() : null,
+      dropDate: task.effectiveDropDate ? task.effectiveDropDate.toISOString() : null,
       tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
     };
   }
@@ -120,6 +126,20 @@
 
   if (filter.hasDeferDate === true) {
     tasks = tasks.filter(function(t) { return t.deferDate !== null; });
+  }
+
+  if (filter.completedAfter) {
+    var completedCutoff = new Date(filter.completedAfter);
+    tasks = tasks.filter(function(t) {
+      return t.completionDate !== null && new Date(t.completionDate) >= completedCutoff;
+    });
+  }
+
+  if (filter.droppedAfter) {
+    var droppedCutoff = new Date(filter.droppedAfter);
+    tasks = tasks.filter(function(t) {
+      return t.dropDate !== null && new Date(t.dropDate) >= droppedCutoff;
+    });
   }
 
   // ── Limit ───────────────────────────────────────────────────────────────────

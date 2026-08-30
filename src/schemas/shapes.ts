@@ -31,6 +31,12 @@ export const RepetitionRuleDetail = z.object({
 
 // ─── Task ────────────────────────────────────────────────────────────────────
 
+// Accepts either a full ISO datetime ("2026-07-17T00:00:00.000Z") or a bare
+// date ("2026-07-17"). A bare date resolves to local midnight on the machine
+// running the connector — the same local day OmniFocus itself uses to decide
+// availability — rather than being parsed as UTC midnight.
+const DateOrBareDate = z.union([z.string().date(), z.string().datetime()]);
+
 export const TaskSummary = z.object({
   id: IdSchema,
   name: z.string(),
@@ -41,6 +47,8 @@ export const TaskSummary = z.object({
   dueDate: z.string().datetime().nullable(),
   deferDate: z.string().datetime().nullable(),
   plannedDate: z.string().datetime().nullable(),
+  completionDate: z.string().datetime().nullable(),
+  dropDate: z.string().datetime().nullable(),
   tagIds: z.array(IdSchema),
 });
 
@@ -50,6 +58,8 @@ export const ListTasksFilter = z.object({
   tagId: IdSchema.optional(),
   dueBeforeDate: z.string().datetime().optional(),
   hasDeferDate: z.literal(true).optional().describe("Return only tasks that have a defer date set"),
+  completedAfter: z.string().datetime().optional().describe("Return only tasks completed at or after this timestamp. NOTE: complete tasks are excluded by default, so this filter returns nothing unless you also pass status including \"complete\" (e.g. status: [\"complete\"])."),
+  droppedAfter: z.string().datetime().optional().describe("Return only tasks dropped at or after this timestamp. NOTE: dropped tasks are excluded by default, so this filter returns nothing unless you also pass status including \"dropped\" (e.g. status: [\"dropped\"])."),
 });
 
 export const TaskDetail = z.object({
@@ -62,12 +72,14 @@ export const TaskDetail = z.object({
   plannedDate: z.string().datetime().nullable(),
   dueDate: z.string().datetime().nullable(),
   completionDate: z.string().datetime().nullable(),
+  dropDate: z.string().datetime().nullable(),
   estimatedMinutes: z.number().nullable(),
   containerId: IdSchema.nullable(),
   containerType: z.enum(["project", "inbox", "task"]).nullable(),
   tagIds: z.array(IdSchema),
   parentTaskId: IdSchema.nullable(),
   repetitionRule: RepetitionRuleDetail.nullable(),
+  sequential: z.boolean(),
 });
 
 export const CreateTaskInput = z
@@ -75,14 +87,15 @@ export const CreateTaskInput = z
     name: z.string().min(1),
     note: z.string().optional(),
     flagged: z.boolean().optional(),
-    deferDate: z.string().datetime().optional(),
-    plannedDate: z.string().datetime().optional(),
-    dueDate: z.string().datetime().optional(),
+    deferDate: DateOrBareDate.optional(),
+    plannedDate: DateOrBareDate.optional(),
+    dueDate: DateOrBareDate.optional(),
     estimatedMinutes: z.number().int().positive().optional(),
     projectId: IdSchema.optional(),
     parentTaskId: IdSchema.optional(),
     tagIds: z.array(IdSchema).optional(),
     repetitionRule: RepetitionRuleInput.optional(),
+    sequential: z.boolean().optional().describe("Whether this task's own subtasks must be completed in order. Omit to leave OmniFocus's default (parallel)."),
   })
   .refine((d) => !(d.projectId && d.parentTaskId), {
     message: "Provide projectId or parentTaskId, not both",
@@ -93,9 +106,9 @@ export const EditTaskInput = z.object({
   name: z.string().min(1).optional(),
   note: z.string().optional(),
   flagged: z.boolean().optional(),
-  deferDate: z.string().datetime().optional(),
-  plannedDate: z.string().datetime().optional(),
-  dueDate: z.string().datetime().optional(),
+  deferDate: DateOrBareDate.optional(),
+  plannedDate: DateOrBareDate.optional(),
+  dueDate: DateOrBareDate.optional(),
   clearDeferDate: z.literal(true).optional().describe("Set to true to clear the task's defer date"),
   clearPlannedDate: z.literal(true).optional().describe("Set to true to clear the task's planned date"),
   clearDueDate: z.literal(true).optional().describe("Set to true to clear the task's due date"),
@@ -103,6 +116,7 @@ export const EditTaskInput = z.object({
   tagIds: z.array(IdSchema).optional(),
   repetitionRule: RepetitionRuleInput.optional(),
   clearRepetitionRule: z.literal(true).optional().describe("Set to true to clear the task's repetition rule"),
+  sequential: z.boolean().optional().describe("Whether this task's own subtasks must be completed in order"),
 });
 
 // ─── Project ─────────────────────────────────────────────────────────────────

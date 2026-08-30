@@ -17,7 +17,7 @@ export async function dropTaskHandler(
 
 export const dropTaskTool = {
   name: "drop_task",
-  description: "Mark a task dropped by its stable ID. Returns the updated task detail.",
+  description: "Mark a task dropped by its stable ID. Returns the updated task detail, including dropDate.",
   inputSchema: dropTaskSchema,
   handler: dropTaskHandler,
 } as const;

@@ -57,6 +57,35 @@ describe("edit_task (integration)", () => {
     expect(task.plannedDate).toBeNull();
   });
 
+  it("resolves a bare deferDate to local midnight, not UTC midnight", async () => {
+    const raw = await runSnippet("edit_task", { id: taskId, deferDate: "2026-08-03" });
+    const task = TaskDetail.parse(raw);
+    expect(task.deferDate).not.toBeNull();
+    const d = new Date(task.deferDate!);
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(7); // August
+    expect(d.getDate()).toBe(3);
+    expect(d.getHours()).toBe(0);
+    expect(d.getMinutes()).toBe(0);
+  });
+
+  it("still accepts a full ISO datetime for deferDate", async () => {
+    const raw = await runSnippet("edit_task", { id: taskId, deferDate: "2026-08-03T09:30:00.000Z" });
+    const task = TaskDetail.parse(raw);
+    expect(task.deferDate).toBe("2026-08-03T09:30:00.000Z");
+  });
+
+  it("sets and clears sequential", async () => {
+    const raw = await runSnippet("edit_task", { id: taskId, sequential: true });
+    const task = TaskDetail.parse(raw);
+    expect(task.sequential).toBe(true);
+
+    const cleared = TaskDetail.parse(
+      await runSnippet("edit_task", { id: taskId, sequential: false })
+    );
+    expect(cleared.sequential).toBe(false);
+  });
+
   it("replaces tag set", async () => {
     const tagId = await createTestTag(`__mcp_test_tag_${Date.now()}__`);
     try {

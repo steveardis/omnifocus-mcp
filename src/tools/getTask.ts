@@ -18,7 +18,7 @@ export async function getTaskHandler(
 export const getTaskTool = {
   name: "get_task",
   description:
-    "Get full detail for a task by its stable ID. Returns note, status, flagged, defer/due/completion dates, estimated minutes, container info, tag IDs, and parentTaskId (null for top-level tasks, set to the parent task's ID for subtasks).",
+    "Get full detail for a task by its stable ID. Returns note, status, flagged, defer/due/completion/drop dates, estimated minutes, container info, tag IDs, parentTaskId (null for top-level tasks, set to the parent task's ID for subtasks), and sequential (whether this task's own subtasks must be completed in order).",
   inputSchema: getTaskSchema,
   handler: getTaskHandler,
 } as const;

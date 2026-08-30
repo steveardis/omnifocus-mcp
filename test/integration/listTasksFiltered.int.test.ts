@@ -8,7 +8,7 @@ import {
   deleteTestTag,
   type TestFixture,
 } from "./fixtures.js";
-import { TaskSummary } from "../../src/schemas/index.js";
+import { TaskSummary, TaskDetail } from "../../src/schemas/index.js";
 import { z } from "zod";
 
 const TaskSummaryArray = z.array(TaskSummary);
@@ -174,5 +174,39 @@ describe("list_tasks filtering (integration)", () => {
     expect(flagged).toBeDefined();
     expect(flagged!.deferDate).toBeNull();
     expect(flagged!.plannedDate).toBeNull();
+  });
+
+  it("droppedAfter filter narrows to tasks dropped at or after the cutoff", async () => {
+    const created = TaskDetail.parse(
+      await runSnippet("create_task", { name: "Task to drop for filter test", projectId })
+    );
+    const beforeDrop = new Date().toISOString();
+    await runSnippet("drop_task", { id: created.id });
+
+    const raw = await runSnippet("list_tasks", {
+      scope: { projectId },
+      filter: { status: ["dropped"], droppedAfter: beforeDrop },
+    });
+    const tasks = TaskSummaryArray.parse(raw);
+    expect(tasks.some((t) => t.id === created.id)).toBe(true);
+    tasks.forEach((t) => expect(t.dropDate).not.toBeNull());
+
+    const rawFuture = await runSnippet("list_tasks", {
+      scope: { projectId },
+      filter: { status: ["dropped"], droppedAfter: "2099-01-01T00:00:00.000Z" },
+    });
+    const futureTasks = TaskSummaryArray.parse(rawFuture);
+    expect(futureTasks.some((t) => t.id === created.id)).toBe(false);
+  });
+
+  it("summary includes dropDate, null unless dropped", async () => {
+    const raw = await runSnippet("list_tasks", {
+      scope: { projectId },
+      filter: { status: ["available", "blocked", "next", "overdue", "dueSoon"] },
+    });
+    const tasks = TaskSummaryArray.parse(raw);
+    const plain = tasks.find((t) => t.name === "Deferred Task");
+    expect(plain).toBeDefined();
+    expect(plain!.dropDate).toBeNull();
   });
 });

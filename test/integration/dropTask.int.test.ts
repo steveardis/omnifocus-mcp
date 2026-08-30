@@ -26,4 +26,15 @@ describe("drop_task (integration)", () => {
     const task = TaskDetail.parse(raw);
     expect(task.status).toBe("dropped");
   });
+
+  it("returns a non-null dropDate after dropping", async () => {
+    const projectId = await createTestProject(fixture.folderId, "DropTask DropDate Project");
+    const created = TaskDetail.parse(
+      await runSnippet("create_task", { name: "Task to drop for dropDate", projectId })
+    );
+    expect(created.dropDate).toBeNull();
+
+    const dropped = TaskDetail.parse(await runSnippet("drop_task", { id: created.id }));
+    expect(dropped.dropDate).not.toBeNull();
+  });
 });

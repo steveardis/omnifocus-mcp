@@ -123,4 +123,16 @@ describe("ListTasksFilter schema", () => {
       ListTasksFilter.parse({ flagged: false })
     ).toThrow();
   });
+
+  it("accepts droppedAfter", () => {
+    expect(() =>
+      ListTasksFilter.parse({ droppedAfter: "2026-07-01T00:00:00.000Z" })
+    ).not.toThrow();
+  });
+
+  it("rejects non-ISO droppedAfter", () => {
+    expect(() =>
+      ListTasksFilter.parse({ droppedAfter: "July 1, 2026" })
+    ).toThrow();
+  });
 });

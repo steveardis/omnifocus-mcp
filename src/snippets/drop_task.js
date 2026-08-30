@@ -66,13 +66,15 @@
       deferDate: isoOrNull(task.deferDate),
       plannedDate: isoOrNull(task.plannedDate),
       dueDate: isoOrNull(task.dueDate),
-      completionDate: isoOrNull(task.completionDate),
+      completionDate: isoOrNull(task.effectiveCompletedDate),
+      dropDate: isoOrNull(task.effectiveDropDate),
       estimatedMinutes: task.estimatedMinutes || null,
       containerId: containerId,
       containerType: containerType,
       tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
       parentTaskId: task.parentTask ? task.parentTask.id.primaryKey : null,
       repetitionRule: parseRepetitionRule(task.repetitionRule),
+      sequential: task.sequential || false,
     };
   }
 

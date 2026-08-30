@@ -29,12 +29,16 @@
   }
 
   function containerInfo(task) {
-    if (!task.assignedContainer) return { containerId: null, containerType: null };
-    const c = task.assignedContainer;
-    if (c instanceof Project) {
-      return { containerId: c.id.primaryKey, containerType: "project" };
+    // Use parentTask and containingProject rather than assignedContainer —
+    // assignedContainer reflects original placement and doesn't update after moveTasks,
+    // and comes back null for completed tasks.
+    if (task.parentTask) {
+      return { containerId: task.parentTask.id.primaryKey, containerType: "task" };
     }
-    return { containerId: c.id.primaryKey, containerType: "task" };
+    if (task.containingProject) {
+      return { containerId: task.containingProject.id.primaryKey, containerType: "project" };
+    }
+    return { containerId: null, containerType: null };
   }
 
   function parseMethod(method) {
@@ -83,13 +87,15 @@
     deferDate: isoOrNull(task.deferDate),
     plannedDate: isoOrNull(task.plannedDate),
     dueDate: isoOrNull(task.dueDate),
-    completionDate: isoOrNull(task.completionDate),
+    completionDate: isoOrNull(task.effectiveCompletedDate),
+    dropDate: isoOrNull(task.effectiveDropDate),
     estimatedMinutes: task.estimatedMinutes || null,
     containerId: ci.containerId,
     containerType: ci.containerType,
     tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
     parentTaskId: task.parentTask ? task.parentTask.id.primaryKey : null,
     repetitionRule: parseRepetitionRule(task.repetitionRule),
+    sequential: task.sequential || false,
   };
 
   return JSON.stringify({ ok: true, data: detail });

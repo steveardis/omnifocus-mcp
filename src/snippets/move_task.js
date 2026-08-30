@@ -109,6 +109,8 @@
       dueDate: movedTask.dueDate ? movedTask.dueDate.toISOString() : null,
       deferDate: movedTask.deferDate ? movedTask.deferDate.toISOString() : null,
       plannedDate: movedTask.plannedDate ? movedTask.plannedDate.toISOString() : null,
+      completionDate: movedTask.effectiveCompletedDate ? movedTask.effectiveCompletedDate.toISOString() : null,
+      dropDate: movedTask.effectiveDropDate ? movedTask.effectiveDropDate.toISOString() : null,
       tagIds: (movedTask.tags || []).map(function(t) { return t.id.primaryKey; }),
     },
   });

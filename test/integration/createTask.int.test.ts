@@ -38,6 +38,51 @@ describe("create_task (integration)", () => {
     expect(task.containerType).toBe("project");
   });
 
+  it("resolves a bare deferDate to local midnight, not UTC midnight", async () => {
+    const raw = await runSnippet("create_task", {
+      name: "Bare defer date test",
+      projectId,
+      deferDate: "2026-07-20",
+    });
+    const task = TaskDetail.parse(raw);
+    expect(task.deferDate).not.toBeNull();
+    const d = new Date(task.deferDate!);
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(6); // July
+    expect(d.getDate()).toBe(20);
+    expect(d.getHours()).toBe(0);
+    expect(d.getMinutes()).toBe(0);
+    expect(d.getSeconds()).toBe(0);
+  });
+
+  it("resolves a bare dueDate to local midnight, not UTC midnight", async () => {
+    const raw = await runSnippet("create_task", {
+      name: "Bare due date test",
+      projectId,
+      dueDate: "2026-07-21",
+    });
+    const task = TaskDetail.parse(raw);
+    const d = new Date(task.dueDate!);
+    expect(d.getDate()).toBe(21);
+    expect(d.getHours()).toBe(0);
+  });
+
+  it("creates with sequential set and reports it back", async () => {
+    const raw = await runSnippet("create_task", {
+      name: "Sequential parent test",
+      projectId,
+      sequential: true,
+    });
+    const task = TaskDetail.parse(raw);
+    expect(task.sequential).toBe(true);
+  });
+
+  it("reports sequential as a boolean when omitted (OmniFocus's own default, whatever it is)", async () => {
+    const raw = await runSnippet("create_task", { name: "Default sequential test", projectId });
+    const task = TaskDetail.parse(raw);
+    expect(typeof task.sequential).toBe("boolean");
+  });
+
   it("creates a subtask and sets parentTaskId", async () => {
     const parentRaw = await runSnippet("create_task", {
       name: "Parent task",

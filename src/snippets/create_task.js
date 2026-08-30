@@ -16,6 +16,17 @@
 
   function isoOrNull(d) { return d ? d.toISOString() : null; }
 
+  // A bare "YYYY-MM-DD" date is resolved to local midnight (start of day on
+  // this machine, which is what OmniFocus itself uses to decide availability)
+  // rather than JS's default of UTC midnight — see TECH-017 Gap 2.
+  function parseDateInput(s) {
+    var bareDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    if (bareDateMatch) {
+      return new Date(Number(bareDateMatch[1]), Number(bareDateMatch[2]) - 1, Number(bareDateMatch[3]));
+    }
+    return new Date(s);
+  }
+
   function taskStatus(task) {
     try {
       const s = task.taskStatus;
@@ -107,13 +118,15 @@
       deferDate: isoOrNull(task.deferDate),
       plannedDate: isoOrNull(task.plannedDate),
       dueDate: isoOrNull(task.dueDate),
-      completionDate: isoOrNull(task.completionDate),
+      completionDate: isoOrNull(task.effectiveCompletedDate),
+      dropDate: isoOrNull(task.effectiveDropDate),
       estimatedMinutes: task.estimatedMinutes || null,
       containerId: containerId,
       containerType: containerType,
       tagIds: (task.tags || []).map(function(t) { return t.id.primaryKey; }),
       parentTaskId: parentTaskId,
       repetitionRule: parseRepetitionRule(task.repetitionRule),
+      sequential: task.sequential || false,
     };
   }
 
@@ -138,10 +151,11 @@
 
   if (args.note !== undefined) task.note = args.note;
   if (args.flagged !== undefined) task.flagged = args.flagged;
-  if (args.deferDate !== undefined && args.deferDate !== null) task.deferDate = new Date(args.deferDate);
-  if (args.plannedDate !== undefined && args.plannedDate !== null) task.plannedDate = new Date(args.plannedDate);
-  if (args.dueDate !== undefined && args.dueDate !== null) task.dueDate = new Date(args.dueDate);
+  if (args.deferDate !== undefined && args.deferDate !== null) task.deferDate = parseDateInput(args.deferDate);
+  if (args.plannedDate !== undefined && args.plannedDate !== null) task.plannedDate = parseDateInput(args.plannedDate);
+  if (args.dueDate !== undefined && args.dueDate !== null) task.dueDate = parseDateInput(args.dueDate);
   if (args.estimatedMinutes !== undefined && args.estimatedMinutes !== null) task.estimatedMinutes = args.estimatedMinutes;
+  if (args.sequential !== undefined) task.sequential = args.sequential;
 
   if (args.tagIds && args.tagIds.length > 0) {
     args.tagIds.forEach(function(tagId) {

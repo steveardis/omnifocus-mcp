@@ -50,6 +50,29 @@ describe("CreateTaskInput schema", () => {
   it("rejects empty name", () => {
     expect(() => CreateTaskInput.parse({ name: "" })).toThrow();
   });
+
+  it("accepts a bare date (no time) for deferDate/plannedDate/dueDate", () => {
+    expect(() =>
+      CreateTaskInput.parse({
+        name: "Bare date task",
+        deferDate: "2026-07-17",
+        plannedDate: "2026-07-17",
+        dueDate: "2026-07-18",
+      })
+    ).not.toThrow();
+  });
+
+  it("rejects a malformed date string", () => {
+    expect(() =>
+      CreateTaskInput.parse({ name: "Bad date", deferDate: "17 July 2026" })
+    ).toThrow();
+  });
+
+  it("accepts sequential", () => {
+    expect(() =>
+      CreateTaskInput.parse({ name: "Sequential parent", sequential: true })
+    ).not.toThrow();
+  });
 });
 
 describe("EditTaskInput schema", () => {
@@ -83,5 +106,17 @@ describe("EditTaskInput schema", () => {
 
   it("rejects empty id", () => {
     expect(() => EditTaskInput.parse({ id: "", name: "Updated" })).toThrow();
+  });
+
+  it("accepts a bare date (no time) for deferDate", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc123", deferDate: "2026-07-17" })
+    ).not.toThrow();
+  });
+
+  it("accepts sequential", () => {
+    expect(() =>
+      EditTaskInput.parse({ id: "abc123", sequential: false })
+    ).not.toThrow();
   });
 });
