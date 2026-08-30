@@ -81,3 +81,8 @@ npm run test:integration
 # Clean up stale test fixtures from interrupted runs
 npm run test:cleanup-fixtures
 ```
+
+## Releasing
+
+See [RELEASING.md](RELEASING.md). A release publishes to both npm and the MCP
+registry; updating only one leaves them out of step.

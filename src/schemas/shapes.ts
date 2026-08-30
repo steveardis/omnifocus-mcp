@@ -58,8 +58,8 @@ export const ListTasksFilter = z.object({
   tagId: IdSchema.optional(),
   dueBeforeDate: z.string().datetime().optional(),
   hasDeferDate: z.literal(true).optional().describe("Return only tasks that have a defer date set"),
-  completedAfter: z.string().datetime().optional().describe("Return only tasks completed at or after this timestamp"),
-  droppedAfter: z.string().datetime().optional().describe("Return only tasks dropped at or after this timestamp"),
+  completedAfter: z.string().datetime().optional().describe("Return only tasks completed at or after this timestamp. NOTE: complete tasks are excluded by default, so this filter returns nothing unless you also pass status including \"complete\" (e.g. status: [\"complete\"])."),
+  droppedAfter: z.string().datetime().optional().describe("Return only tasks dropped at or after this timestamp. NOTE: dropped tasks are excluded by default, so this filter returns nothing unless you also pass status including \"dropped\" (e.g. status: [\"dropped\"])."),
 });
 
 export const TaskDetail = z.object({

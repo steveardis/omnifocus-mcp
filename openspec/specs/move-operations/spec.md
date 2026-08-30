@@ -1,3 +1,9 @@
+# move-operations
+
+## Purpose
+
+Covers relocating existing objects: moving a task into a different project or under a different parent task, and moving a project into a folder or back to the top level.
+
 ## Requirements
 
 ### Requirement: Move task to a new container

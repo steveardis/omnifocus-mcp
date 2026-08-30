@@ -8,7 +8,7 @@ const SNIPPETS_DIR = join(__dirname, "..", "snippets");
 // Allowlist of valid snippet names. Adding a new snippet requires an explicit
 // entry here, which prevents path-traversal attacks if a snippet name ever
 // reaches this loader from a dynamic source.
-const ALLOWED_SNIPPETS = new Set([
+export const ALLOWED_SNIPPETS = new Set([
   "get_folder",
   "get_project",
   "get_tag",

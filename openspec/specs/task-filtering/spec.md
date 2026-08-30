@@ -1,4 +1,10 @@
-## ADDED Requirements
+# task-filtering
+
+## Purpose
+
+Covers the optional `filter` and `limit` arguments to `list_tasks`, the default exclusion of complete and dropped tasks, and the fields carried on each returned task summary.
+
+## Requirements
 
 ### Requirement: Filter list_tasks results
 

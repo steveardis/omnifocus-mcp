@@ -1,4 +1,10 @@
-## ADDED Requirements
+# tag-write
+
+## Purpose
+
+Covers the tools that create, modify, and delete OmniFocus tags, including nesting a tag under a parent and deleting a tag together with its descendants.
+
+## Requirements
 
 ### Requirement: Create tag
 

@@ -119,9 +119,11 @@ npm run typecheck
 # Run unit tests (no OmniFocus required)
 npm test
 
-# Build
+# Build (compiles TypeScript and copies snippets into dist/)
 npm run build
 ```
+
+Publishing a new version is documented in [RELEASING.md](RELEASING.md).
 
 ## Testing
 

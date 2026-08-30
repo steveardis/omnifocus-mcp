@@ -1,12 +1,15 @@
 {
   "name": "@scardis/omnifocus-mcp",
-  "version": "0.1.5",
+  "version": "0.2.1",
   "description": "MCP server for OmniFocus via Omni Automation JavaScript API",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steveardis/omnifocus-mcp.git"
+  },
   "mcpName": "io.github.steveardis/omnifocus",
   "files": [
     "dist/",
-    "src/snippets/",
     "LICENSE",
     "README.md"
   ],
@@ -18,12 +21,14 @@
     "omnifocus-mcp": "dist/server.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy:snippets",
     "typecheck": "tsc --noEmit",
     "start": "tsx src/server.ts",
     "test": "vitest run --config vitest.config.ts",
     "test:integration": "node -e \"if(process.platform!=='darwin'){console.error('Integration tests require macOS');process.exit(1)}\" && vitest run --config vitest.integration.config.ts",
-    "test:cleanup-fixtures": "tsx scripts/cleanup-fixtures.ts"
+    "test:cleanup-fixtures": "tsx scripts/cleanup-fixtures.ts",
+    "copy:snippets": "tsx scripts/copy-snippets.ts",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
@@ -33,6 +38,6 @@
     "@types/node": "^22.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^3.2.4"
   }
 }

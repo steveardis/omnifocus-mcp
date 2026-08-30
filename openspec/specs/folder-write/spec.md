@@ -1,4 +1,10 @@
-## ADDED Requirements
+# folder-write
+
+## Purpose
+
+Covers the tools that create, rename, and delete OmniFocus folders, including the recursive deletion of a folder's entire subtree of child folders, projects, and tasks.
+
+## Requirements
 
 ### Requirement: Create folder
 
